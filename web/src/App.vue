@@ -1,47 +1,40 @@
-<script setup>
-import HelloWorld from './components/HelloWorld.vue'
-import TheWelcome from './components/TheWelcome.vue'
-</script>
-
 <template>
-  <header>
-    <img alt="Vue logo" class="logo" src="./assets/logo.svg" width="125" height="125" />
+  <div id="test">hello world</div>
+  <br>
+  <div>
+    <h1>{{res}}</h1>
+  </div>
 
-    <div class="wrapper">
-      <HelloWorld msg="You did it!" />
-    </div>
-  </header>
-
-  <main>
-    <TheWelcome />
-  </main>
+  <!-- <RouterView /> -->
 </template>
 
-<style scoped>
-header {
-  line-height: 1.5;
+<script setup>
+// import { RouterLink, RouterView } from 'vue-router'
+import { ref } from 'vue'
+import { onMounted } from 'vue'
+import axios from 'axios'
+
+const res = ref('')
+
+const fetch = async () => {
+  try {
+      const response = await axios.get('http://localhost:3000/pk');
+      res.value = response.data; // 获取响应数据
+      console.log(res.value);
+  } catch (error) {
+      console.error('请求失败:', error);
+  }
 }
+fetch()
+// onMounted(() => {
+//   fetch()
+// })
+</script>
 
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
-}
 
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
-
-  .logo {
-    margin: 0 2rem 0 0;
-  }
-
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
+<style>
+body {
+  background-image: url("@/assets/background.jpg");
+  background-size: cover;
 }
 </style>
