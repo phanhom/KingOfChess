@@ -12,8 +12,10 @@ export class GameMap extends GameObject {
         this.rows = 15;
         this.cols = 15;
 
-        this.inner_walls_count = 50;
+        this.inner_walls_count = 10;
         this.walls = [];
+        this.collision_eps = 0.6;
+        this.bullet_collision_eps = 0.3;
 
         this.planes = [
             new plane({
@@ -105,19 +107,41 @@ export class GameMap extends GameObject {
 
     check_ready() {
         for (const plane of this.planes) {
-            // if (plane.status == "idle") return false;
+            if (plane.status == "idle") return false;
             if (plane.direction == -1) return false;
         }
-        console.log("test");
         return true;
     }
 
-    check_valid(rr, cc) { // 判断两个飞机的nextstep是否相同 （子弹距离小于0.5）
-        // console.log("-------------")
-        // console.log(rr, cc);
-        if(this.planes[0].next_pos == this.planes[1].next_pos) return false;
+    check_valid(pos_x, pos_y, plane_id) {
+        // 检查飞机相撞
+        if(Math.abs(this.planes[0].x - this.planes[1].x) < this.collision_eps && Math.abs(this.planes[0].y - this.planes[1].y) < this.collision_eps)
+            return false;
+
+        // 检查飞机撞墙
         for(const wall of this.walls) {
-            if(wall.r == rr && wall.c == cc) return false;
+            if((Math.abs(wall.r + 0.5 - pos_y) < this.collision_eps) && (Math.abs(wall.c + 0.5 - pos_x) < this.collision_eps))
+                return false;
+        }
+
+        // 检查子弹撞飞机
+        for(let plane of this.planes) {
+            // 另一架飞机的子弹撞到我了
+
+            for(let bullet of plane.bullets) {
+                if(bullet.status == "dead") continue;
+                for(const wall of this.walls) {
+                    if(wall.r == bullet.r && wall.c == bullet.c) {
+                        bullet.status = "dead";
+                        console.log("check_vaild() => bullet hit wall");
+                    }
+                }
+                if(plane.id == plane_id) continue;
+                if((Math.abs(bullet.x - pos_x) < this.bullet_collision_eps) && (Math.abs(bullet.y - pos_y) < this.bullet_collision_eps)) {
+                    bullet.status = "dead";
+                    return false;
+                }
+            }
         }
         return true;
     }
@@ -126,20 +150,19 @@ export class GameMap extends GameObject {
         this.ctx.canvas.focus();
 
         const [plane0, plane1] = this.planes;
-        // console.log(plane0, plane1);
         this.ctx.canvas.addEventListener("keydown", e => {
             e.preventDefault();
             if (e.key === "w") plane0.set_direction(0);
             else if (e.key == "d") plane0.set_direction(1);
             else if (e.key == "s") plane0.set_direction(2);
             else if (e.key == "a") plane0.set_direction(3);
+            else if (e.key == "j") plane0.shoot();
             else if (e.key == "ArrowUp") plane1.set_direction(0);
             else if (e.key == "ArrowRight") plane1.set_direction(1);
             else if (e.key == "ArrowDown") plane1.set_direction(2);
             else if (e.key == "ArrowLeft") plane1.set_direction(3);
-            // console.log("xxxxxxxxxxxxxx");
-            console.log(e.key);
-
+            else if (e.key == "1") plane1.shoot();
+            console.log("add_listening_events =>" + e.key);
         });
     }
 
@@ -169,8 +192,6 @@ export class GameMap extends GameObject {
     }
 
     render() {
-        // this.ctx.fillStyle = "green";
-        // this.ctx.fillRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
         const color_even = "#AAD751", color_odd = "#BBE862";
         for (let i = 0; i < this.rows; i++) {
             for (let j = 0; j < this.cols; j++) {
