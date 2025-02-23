@@ -33,7 +33,7 @@ export class GameObject {
     }
 }
 
-const step = (timestamp) => {
+const step = timestamp => {
     for (let i in GAME_OBJECTS) {
         let obj = GAME_OBJECTS[i];
         if (!obj.has_called_start) {

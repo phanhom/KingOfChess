@@ -1,6 +1,6 @@
 import { GameObject } from "./GameObject.js";
 import { Wall } from "./Wall.js";
-import { plane } from "./plane.js";
+import { Fighter } from "./Fighter.js";
 
 export class GameMap extends GameObject {
     constructor(ctx, parent) {
@@ -15,15 +15,15 @@ export class GameMap extends GameObject {
         this.inner_walls_count = 50;
         this.walls = [];
 
-        this.planes = [
-            new plane({
+        this.fighters = [
+            new Fighter({
                 id: 0,
                 color: "#4876FF",
                 r: this.rows - 2,
                 c: 1
             }, this),
 
-            new plane({
+            new Fighter({
                 id: 1,
                 color: "#FF4864",
                 r: 1,
@@ -98,15 +98,15 @@ export class GameMap extends GameObject {
     }
 
     next_step() {
-        for (const plane of this.planes) {
-            plane.next_step();
+        for (const fighter of this.fighters) {
+            fighter.next_step();
         }
     }
 
     check_ready() {
-        for (const plane of this.planes) {
-            // if (plane.status == "idle") return false;
-            if (plane.direction == -1) return false;
+        for (const fighter of this.fighters) {
+            if (fighter.status == "idle") return false;
+            if (fighter.direction == -1) return false;
         }
         console.log("test");
         return true;
@@ -115,7 +115,7 @@ export class GameMap extends GameObject {
     check_valid(rr, cc) { // 判断两个飞机的nextstep是否相同 （子弹距离小于0.5）
         // console.log("-------------")
         // console.log(rr, cc);
-        if(this.planes[0].next_pos == this.planes[1].next_pos) return false;
+        if(this.fighters[0].next_pos == this.fighters[1].next_pos) return false;
         for(const wall of this.walls) {
             if(wall.r == rr && wall.c == cc) return false;
         }
@@ -125,18 +125,18 @@ export class GameMap extends GameObject {
     add_listening_events() {
         this.ctx.canvas.focus();
 
-        const [plane0, plane1] = this.planes;
-        // console.log(plane0, plane1);
+        const [fighter0, fighter1] = this.fighters;
+        // console.log(fighter0, fighter1);
         this.ctx.canvas.addEventListener("keydown", e => {
             e.preventDefault();
-            if (e.key === "w") plane0.set_direction(0);
-            else if (e.key == "d") plane0.set_direction(1);
-            else if (e.key == "s") plane0.set_direction(2);
-            else if (e.key == "a") plane0.set_direction(3);
-            else if (e.key == "ArrowUp") plane1.set_direction(0);
-            else if (e.key == "ArrowRight") plane1.set_direction(1);
-            else if (e.key == "ArrowDown") plane1.set_direction(2);
-            else if (e.key == "ArrowLeft") plane1.set_direction(3);
+            if (e.key === "w") fighter0.set_direction(0);
+            else if (e.key == "d") fighter0.set_direction(1);
+            else if (e.key == "s") fighter0.set_direction(2);
+            else if (e.key == "a") fighter0.set_direction(3);
+            else if (e.key == "ArrowUp") fighter1.set_direction(0);
+            else if (e.key == "ArrowRight") fighter1.set_direction(1);
+            else if (e.key == "ArrowDown") fighter1.set_direction(2);
+            else if (e.key == "ArrowLeft") fighter1.set_direction(3);
             // console.log("xxxxxxxxxxxxxx");
             console.log(e.key);
 
