@@ -9,10 +9,10 @@ export class GameMap extends GameObject {
         this.ctx = ctx;
         this.parent = parent;
         this.L = 0;
-        this.rows = 15;
-        this.cols = 15;
+        this.rows = 18;
+        this.cols = 18;
 
-        this.inner_walls_count = 10;
+        this.inner_walls_count = 40;
         this.walls = [];
         this.collision_eps = 0.6;
         this.bullet_collision_eps = 0.3;
