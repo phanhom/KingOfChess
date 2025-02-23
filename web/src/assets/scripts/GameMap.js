@@ -114,28 +114,30 @@ export class GameMap extends GameObject {
     }
 
     check_valid(pos_x, pos_y, plane_id) {
+        // console.log("check_valid => start");
+        // 结束界面 + 倒计时 + 重新开始
         // 检查飞机相撞
         if(Math.abs(this.planes[0].x - this.planes[1].x) < this.collision_eps && Math.abs(this.planes[0].y - this.planes[1].y) < this.collision_eps)
             return false;
 
         // 检查飞机撞墙
         for(const wall of this.walls) {
-            if((Math.abs(wall.r + 0.5 - pos_y) < this.collision_eps) && (Math.abs(wall.c + 0.5 - pos_x) < this.collision_eps))
+            if((Math.abs(wall.r + 0.5 - pos_y) < this.collision_eps) && (Math.abs(wall.c + 0.5 - pos_x) < this.collision_eps)) {
                 return false;
+            }
         }
 
         // 检查子弹撞飞机
         for(let plane of this.planes) {
-            // 另一架飞机的子弹撞到我了
-
             for(let bullet of plane.bullets) {
                 if(bullet.status == "dead") continue;
                 for(const wall of this.walls) {
                     if(wall.r == bullet.r && wall.c == bullet.c) {
                         bullet.status = "dead";
-                        console.log("check_vaild() => bullet hit wall");
+                        // console.log("check_vaild() => bullet hit wall");
                     }
                 }
+                // 另一架飞机的子弹撞到我了, 所以如果是自己就跳过
                 if(plane.id == plane_id) continue;
                 if((Math.abs(bullet.x - pos_x) < this.bullet_collision_eps) && (Math.abs(bullet.y - pos_y) < this.bullet_collision_eps)) {
                     bullet.status = "dead";
@@ -143,6 +145,7 @@ export class GameMap extends GameObject {
                 }
             }
         }
+        // console.log("check_valid => end");
         return true;
     }
 
@@ -162,7 +165,7 @@ export class GameMap extends GameObject {
             else if (e.key == "ArrowDown") plane1.set_direction(2);
             else if (e.key == "ArrowLeft") plane1.set_direction(3);
             else if (e.key == "1") plane1.shoot();
-            console.log("add_listening_events =>" + e.key);
+            // console.log("add_listening_events => " + e.key);
         });
     }
 

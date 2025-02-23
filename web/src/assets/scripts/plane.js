@@ -47,7 +47,7 @@ export class plane extends GameObject {
         this.status = "moving";
         this.step++;
 
-        if (!this.gamemap.check_valid(this.r, this.c, this.id)) {
+        if (!this.gamemap.check_valid(this.x, this.y, this.id)) {
             this.status = "dead";
         }
     }
@@ -64,7 +64,7 @@ export class plane extends GameObject {
 
         if (!this.gamemap.check_valid(this.x, this.y, this.id)) {
             this.status = "dead";
-            console.log("dead" + this.x);
+            // console.log("dead" + this.x);
         }
     }
 
@@ -77,7 +77,7 @@ export class plane extends GameObject {
 
         if (!this.gamemap.check_valid(this.x, this.y, this.id)) {
             this.status = "dead";
-            console.log("dead" + this.x);
+            // console.log("dead" + this.x);
         }
     }
 
