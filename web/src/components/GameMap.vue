@@ -17,6 +17,9 @@ onMounted(() => {
 </script>
 
 <style scoped>
+    canvas:focus {
+        outline: none;
+    }
     div.gamemap {
         /* position: relative; */
         /* background-color: aqua; */

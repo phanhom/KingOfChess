@@ -1,7 +1,7 @@
 import { GameObject } from "./GameObject.js";
 import { Wall } from "./Wall.js";
 import { plane } from "./plane.js";
-
+// 要吃奖励得分 ????
 export class GameMap extends GameObject {
     constructor(ctx, parent) {
         super();
@@ -9,13 +9,13 @@ export class GameMap extends GameObject {
         this.ctx = ctx;
         this.parent = parent;
         this.L = 0;
-        this.rows = 18;
-        this.cols = 18;
+        this.rows = 16;
+        this.cols = 16;
 
-        this.inner_walls_count = 40;
+        this.inner_walls_count = 10;
         this.walls = [];
         this.collision_eps = 0.6;
-        this.bullet_collision_eps = 0.3;
+        this.bullet_collision_eps = 0.8;
 
         this.planes = [
             new plane({
@@ -107,7 +107,7 @@ export class GameMap extends GameObject {
 
     check_ready() {
         for (const plane of this.planes) {
-            if (plane.status == "idle") return false;
+            if (plane.status != "moving") return false;
             if (plane.direction == -1) return false;
         }
         return true;
@@ -141,6 +141,7 @@ export class GameMap extends GameObject {
                 if(plane.id == plane_id) continue;
                 if((Math.abs(bullet.x - pos_x) < this.bullet_collision_eps) && (Math.abs(bullet.y - pos_y) < this.bullet_collision_eps)) {
                     bullet.status = "dead";
+                    console.log("check_valid() => bullet hit plane");
                     return false;
                 }
             }
