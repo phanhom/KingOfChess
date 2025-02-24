@@ -12,7 +12,7 @@ export class GameMap extends GameObject {
         this.rows = 16;
         this.cols = 16;
 
-        this.inner_walls_count = 10;
+        this.inner_walls_count = 20;
         this.walls = [];
         this.collision_eps = 0.6;
         this.bullet_collision_eps = 0.8;
