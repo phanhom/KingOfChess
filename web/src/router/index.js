@@ -4,6 +4,8 @@ import RanklistIndexView from '@/views/ranklist/RanklistIndexView.vue'
 import RecordIndexView from '@/views/record/RecordIndexView.vue'
 import UserBotIndexView from '@/views/user/bot/UserBotIndexView.vue'
 import NotFound from '@/views/error/NotFound.vue'
+import UserAccountLoginView from '@/views/user/account/UserAccountLoginView.vue'
+import UserAccountRegisterView from '@/views/user/account/UserAccountRegisterView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -37,6 +39,16 @@ const router = createRouter({
       path: '/404',
       name: '404',
       component: NotFound,
+    },
+    {
+      path: '/user/account/login',
+      name: 'user_account_login',
+      component: UserAccountLoginView,
+    },
+    {
+      path: '/user/account/register',
+      name: 'user_account_register',
+      component: UserAccountRegisterView,
     },
     {
       path: '/:catchAll(.*)',

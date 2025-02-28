@@ -8,13 +8,14 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Map;
 
 @RestController
+//@CrossOrigin(origins = "http://localhost:5173/user/account/login")
 public class LoginController {
 
     @Autowired
     private LoginService loginService;
 
     @PostMapping("/user/account/token")
-    public Map<String, String> getToken(@RequestParam Map<String, String> map) {
+    public Map<String, String> getToken(@RequestBody Map<String, String> map) {
         String username = map.get("username");
         String password = map.get("password");
         return loginService.getToken(username, password);
