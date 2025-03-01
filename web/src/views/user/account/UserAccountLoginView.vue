@@ -23,12 +23,14 @@
 import ContentField from '@/components/ContentField.vue'
 import { ref } from 'vue'
 import { useStore } from 'vuex'
+import { useRouter } from 'vue-router'
 // console.log('PkIndexView')
 
 const username = ref('')
 const password = ref('')
 let error_message = ref('')
 const store = useStore()
+const router = useRouter()
 
 const login = async () => {
     // console.log('login')
@@ -36,15 +38,25 @@ const login = async () => {
     // console.log(password.value)
 
     // 登录
-    const res = await store.dispatch('login', {
+    store.dispatch('login', {
         username: username.value,
         password: password.value,
+        success: (res) => {
+            store.dispatch('getinfo', {
+                success: (res) => {
+                    router.push({ name: 'home' });
+                },
+                error: (res) => {
+                    error_message.value = "获取用户信息失败";
+                    console.log('获取用户信息失败', res);
+                }
+            });
+        },
+        error: (res) => {
+            error_message.value = "用户名或密码错误";
+            console.log('用户名或密码错误', res);
+        }
     });
-    console.log(res);
-
-    if(!res.success) {
-        error_message.value = res.message;
-    }
 }
 
 

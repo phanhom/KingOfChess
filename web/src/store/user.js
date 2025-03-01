@@ -17,47 +17,59 @@ export default {
         },
         updateToken(state, token) {
             state.token = token;
+        },
+        logout(state) {
+            state.id = '';
+            state.username = '';
+            state.photo = '';
+            state.token = '';
+            state.is_login = false;
         }
     },
     actions: {
-        async login({ commit }, payload) {
+        async login(context, data) {
             try {
                 const response = await axios.post('http://localhost:3000/user/account/token', {
-                    username: payload.username,
-                    password: payload.password,
+                    username: data.username,
+                    password: data.password,
                 });
 
                 if (response.data.error_message == "success") {
-                    commit('updateToken', response.data.token);
+                    context.commit('updateToken', response.data.token);
                     // console.log("登录成功", response.data);
-                    return { success: true, message: "登录成功" }; // 返回成功
+                    data.success && data.success(response);
                 } else {
                     console.error("登录失败", response.data);
-                    return { success: false, message: "用户名或密码错误" }; // 返回错误信息
+                    data.error && data.error(response);
                 }
             } catch (error) {
                 console.error("请求出错", error);
-                return { success: false, message: "用户名或密码错误" };
+                data.error && data.error(error);
             }
         },
-        async getinfo({ commit }) {
+        async getinfo(context, data) {
             try {
                 const response = await axios.get('http://localhost:3000/user/account/info', {
                     headers: {
-                        Authorization: `Bearer ${this.state.token}`,
+                        Authorization: `Bearer ${context.state.token}`,
                     },
                 });
 
                 if (response.data.error_message == "success") {
-                    commit('updateUser', response.data.data);
+                    context.commit('updateUser', response.data);
                     // console.log("获取用户信息成功", response.data);
-                    return { success: true, message: "获取用户信息成功"}
+                    data.success && data.success(response);
+                } else {
+                    console.error("获取用户信息失败", response.data);
+                    data.error && data.error(response);
                 }
             } catch (error) {
                 console.error("请求出错", error);
-                return { success: false, message: "获取用户信息失败" };
+                data.error && data.error(error);
             }
-            // ?
+        },
+        async logout(context) {
+            context.commit("logout");
         }
     },
     getters: {

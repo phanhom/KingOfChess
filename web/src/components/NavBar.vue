@@ -27,10 +27,10 @@
               :class="routeName == 'ranklist_index' ? 'nav-link active' : 'nav-link'">排行榜</router-link>
           </li>
         </ul>
-        <ul class="navbar-nav">
+        <ul class="navbar-nav" v-if="user.is_login">
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-              phanhom
+              {{ user.username }}
             </a>
             <ul class="dropdown-menu">
               <!-- <li><a class="dropdown-item" href="/user/bot">我的 Bot</a></li> -->
@@ -39,8 +39,20 @@
                 <hr class="dropdown-divider">
               </li>
               <!-- <li><a class="dropdown-item" href="/user/bot">退出</a></li> -->
-              <li><a class="dropdown-item" href="/user/bot">退出</a></li>
+              <li><a class="dropdown-item" href="/user/account/login" @click="logout">退出</a></li>
             </ul>
+          </li>
+        </ul>
+        <ul class="navbar-nav" v-else>
+          <li class="nav-item">
+            <router-link class="nav-link" to="/user/account/login" role="button">
+              登录
+            </router-link>
+          </li>
+          <li class="nav-item dropdown">
+            <router-link class="nav-link" to="/user/account/register" role="button">
+              注册
+            </router-link>
           </li>
         </ul>
       </div>
@@ -49,13 +61,22 @@
 </template>
 
 <script setup>
-import { useRoute } from 'vue-router'
+import { RouterLink, useRoute } from 'vue-router'
 import { computed } from 'vue'
+import { useStore } from 'vuex'
 
 const route = useRoute();
+const store = useStore();
+
 let routeName = computed(() => {
   return route.name;
 });
+let user = computed(() => {
+  return store.state.user;
+});
+const logout = () => {
+  store.dispatch('logout');
+};
 
 </script>
 
