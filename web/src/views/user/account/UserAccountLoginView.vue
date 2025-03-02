@@ -1,7 +1,8 @@
 <template>
     <ContentField>
         <div class="row justify-content-md-center">
-            <div class="col-3">
+            <h2 class="title">登录</h2>
+            <div class="col-10">
                 <form @submit.prevent="login">
                     <div class="mb-3">
                         <label for="username" class="form-label">用户名</label>
@@ -44,6 +45,7 @@ const login = async () => {
         success: (res) => {
             store.dispatch('getinfo', {
                 success: (res) => {
+                    console.log('登录成功', res);
                     router.push({ name: 'home' });
                 },
                 error: (res) => {
@@ -64,8 +66,18 @@ const login = async () => {
 </script>
 
 <style scoped>
+div.row {
+    margin: 0 auto;
+    width: 40%;
+    padding: 20px;
+    border-radius: 12px;
+    background-color: white;
+}
 button {
     width: 100%;
+}
+.title {
+    text-align: center;
 }
 
 .error_message {

@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import store from '../store/index.js'
 import PkIndexView from '@/views/pk/PkIndexView.vue'
 import RanklistIndexView from '@/views/ranklist/RanklistIndexView.vue'
 import RecordIndexView from '@/views/record/RecordIndexView.vue'
@@ -14,11 +15,17 @@ const router = createRouter({
       path: '/',
       name: 'home',
       redirect: '/pk',
+      meta: {
+        requiresAuth: true,
+      },
     },
     {
       path: '/pk',
       name: 'pk_index',
       component: PkIndexView,
+      meta: {
+        requiresAuth: true,
+      },
     },
     {
       path: '/ranklist',
@@ -29,26 +36,41 @@ const router = createRouter({
       path: '/record',
       name: 'record_index',
       component: RecordIndexView,
+      meta: {
+        requiresAuth: true,
+      },
     },
     {
       path: '/user/bot',
       name: 'user_bot_index',
       component: UserBotIndexView,
+      meta: {
+        requiresAuth: true,
+      },
     },
     {
       path: '/404',
       name: '404',
       component: NotFound,
+      meta: {
+        requiresAuth: false,
+      },
     },
     {
       path: '/user/account/login',
       name: 'user_account_login',
       component: UserAccountLoginView,
+      meta: {
+        requiresAuth: false,
+      },
     },
     {
       path: '/user/account/register',
       name: 'user_account_register',
       component: UserAccountRegisterView,
+      meta: {
+        requiresAuth: false,
+      },
     },
     {
       path: '/:catchAll(.*)',
@@ -56,6 +78,40 @@ const router = createRouter({
       redirect: '/404',
     }
   ],
+})
+
+router.beforeEach((to, from, next) => {
+  let flag = 1;
+  const jwt_token = localStorage.getItem('jwt_token');
+  if (jwt_token) {
+    store.commit("updateToken", jwt_token);
+    store.dispatch("getinfo", {
+      success: () => {
+      },
+      error: () => {
+        alert("登录信息过期，请重新登录");
+        localStorage.removeItem('jwt_token');
+        store.commit("logout");
+        router.push({ name: 'user_account_login' });
+      }
+    });
+  } else {
+    flag = 2;
+  }
+
+  if (to.meta.requiresAuth && !store.state.user.is_login) {
+    if(flag == 1) {
+      next();
+    } else {
+      next('/user/account/login');
+    } 
+  } else if(to.name === 'user_account_register' && store.state.user.is_login) {
+    alert("请先退出登录，再进行注册。");
+    console.log(from.fullPath);
+    next(from.fullPath);
+  } else {
+    next();
+  }
 })
 
 export default router

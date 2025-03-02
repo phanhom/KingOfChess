@@ -34,7 +34,7 @@
             </a>
             <ul class="dropdown-menu">
               <!-- <li><a class="dropdown-item" href="/user/bot">我的 Bot</a></li> -->
-              <li><a class="dropdown-item" href="/user/bot">我的 Bot</a></li>
+              <li><router-link class="dropdown-item" to="/user/bot">我的 Bot</router-link></li>
               <li>
                 <hr class="dropdown-divider">
               </li>

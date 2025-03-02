@@ -22,12 +22,16 @@ public class RegisterServiceImpl  implements RegisterService {
 
     @Override
     public Map<String, String> register(String username, String password, String confirmedPassword) {
+//        System.out.println("username: " + username);
+//        System.out.println("password: " + password);
+//        System.out.println("confirmedPassword: " + confirmedPassword);
         Map<String, String> map = new HashMap<>();
         if (username == null || password == null || confirmedPassword == null) {
             map.put("error_message", "用户名或密码不能为空");
             return map;
         }
         username = username.trim();
+
         if (username.length() == 0 || password.length() == 0 || confirmedPassword.length() == 0) {
             map.put("error_message", "用户名或密码不能为空");
             return map;
@@ -36,19 +40,22 @@ public class RegisterServiceImpl  implements RegisterService {
             map.put("error_message", "用户名长度不能大于100");
             return map;
         }
-        if (password.length() > 100 || confirmedPassword.length() > 100) {
-            map.put("error_message", "密码长度不能大于100");
-            return map;
-        }
-        if (!password.equals(confirmedPassword)) {
-            map.put("error_message", "两次输入的密码不一致");
-            return map;
-        }
+
         QueryWrapper queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("username", username);
         List<User> users = userMapper.selectList(queryWrapper);
         if (!users.isEmpty()) {
             map.put("error_message", "用户名已被注册");
+            return map;
+        }
+
+        if (password.length() > 100 || confirmedPassword.length() > 100) {
+            map.put("error_message", "密码长度不能大于100");
+            return map;
+        }
+
+        if (!password.equals(confirmedPassword)) {
+            map.put("error_message", "两次输入的密码不一致");
             return map;
         }
 

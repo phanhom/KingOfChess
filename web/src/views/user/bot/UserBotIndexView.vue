@@ -4,7 +4,7 @@
 
 <script setup>
 import ContentField from '@/components/ContentField.vue'
-console.log('PkIndexView')
+// console.log('PkIndexView')
 </script>
 
 <style scoped></style>

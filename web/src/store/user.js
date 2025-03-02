@@ -16,6 +16,7 @@ export default {
             state.is_login = true;
         },
         updateToken(state, token) {
+            state.is_login = true;
             state.token = token;
         },
         logout(state) {
@@ -35,6 +36,8 @@ export default {
                 });
 
                 if (response.data.error_message == "success") {
+                    localStorage.setItem('jwt_token', response.data.token);
+                    localStorage.setItem('test', "phanhom");
                     context.commit('updateToken', response.data.token);
                     // console.log("登录成功", response.data);
                     data.success && data.success(response);
@@ -69,6 +72,7 @@ export default {
             }
         },
         async logout(context) {
+            localStorage.removeItem('jwt_token');
             context.commit("logout");
         }
     },

@@ -16,5 +16,11 @@
 <style scoped>
 div.content_field {
     margin-top: 20px;
+    background-color: transparent;
+    width: 80%;
+}
+div.card{
+    background-color: transparent;
+    border: none;
 }
 </style>
