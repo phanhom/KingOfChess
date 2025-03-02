@@ -33,4 +33,23 @@ public class GetServiceImpl implements GetService {
 
         return bots;
     }
+
+    @Override
+    public Bot getone(Integer botId) {
+        UsernamePasswordAuthenticationToken authenticationToken =
+                (UsernamePasswordAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
+        UserDetailsImpl loginUser = (UserDetailsImpl) authenticationToken.getPrincipal();
+        User user = loginUser.getUser();
+
+        QueryWrapper<Bot> botQueryWrapper = new QueryWrapper<>();
+        botQueryWrapper.eq("id", botId);
+        Bot bot = botMapper.selectOne(botQueryWrapper);
+        if (bot == null) {
+            return null;
+        }
+        if (!bot.getUserId().equals(user.getId())) {
+            return null;
+        }
+        return bot;
+    }
 }

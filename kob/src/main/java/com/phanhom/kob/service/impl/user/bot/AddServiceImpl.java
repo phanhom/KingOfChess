@@ -1,5 +1,6 @@
 package com.phanhom.kob.service.impl.user.bot;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.phanhom.kob.mapper.BotMapper;
 import com.phanhom.kob.pojo.Bot;
 import com.phanhom.kob.pojo.User;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -27,11 +29,19 @@ public class AddServiceImpl implements AddService {
         UserDetailsImpl loginUser = (UserDetailsImpl) authenticationToken.getPrincipal();
         User user = loginUser.getUser();
 
+        Map<String, String> map = new HashMap<>();
+        // 防止一个人添加过多bots
+        QueryWrapper<Bot> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("user_id", user.getId());
+        List<Bot> bots = botMapper.selectList(queryWrapper);
+        if (bots.size() > 5) {
+            map.put("error_message", "每个用户最多只能创建5个Bot");
+            return map;
+        }
+
         String botName = data.get("botName");
         String description = data.get("description");
         String content = data.get("content");
-
-        Map<String, String> map = new HashMap<>();
 
         if(botName == null || botName.length() == 0) {
             map.put("error_message", "Bot名字不能为空");
@@ -64,8 +74,8 @@ public class AddServiceImpl implements AddService {
 
         Date now = new Date();
         Bot bot = new Bot(null, user.getId(), botName, description, content, 1500, now, now);
-
         botMapper.insert(bot);
+
         map.put("error_message", "success");
 
         return map;

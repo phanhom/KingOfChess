@@ -1,22 +1,22 @@
 package com.phanhom.kob.controller.user.bot;
 
-import com.phanhom.kob.service.user.bot.AddService;
+import com.phanhom.kob.service.user.bot.UpdateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Map;
 
 @RestController
-public class AddController {
+public class UpdateController {
 
     @Autowired
-    private AddService addService;
+    private UpdateService updateService;
 
-    @PostMapping("/user/bot/add")
-    public Map<String, String> add(@RequestBody Map<String, String> map) {
-        return addService.add(map);
+    @PostMapping("/user/bot/update")
+    public Map<String, String> update(@RequestParam Map<String, String> map) {
+        System.out.println(map);
+        return updateService.update(map);
     }
 }

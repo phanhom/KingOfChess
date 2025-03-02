@@ -99,13 +99,14 @@ router.beforeEach((to, from, next) => {
     flag = 2;
   }
 
+  
   if (to.meta.requiresAuth && !store.state.user.is_login) {
-    if(flag == 1) {
+    if (flag == 1) {
       next();
     } else {
       next('/user/account/login');
-    } 
-  } else if(to.name === 'user_account_register' && store.state.user.is_login) {
+    }
+  } else if (to.name === 'user_account_register' && store.state.user.is_login) {
     alert("请先退出登录，再进行注册。");
     console.log(from.fullPath);
     next(from.fullPath);

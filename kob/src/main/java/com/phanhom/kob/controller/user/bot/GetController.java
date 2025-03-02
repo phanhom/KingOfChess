@@ -18,4 +18,9 @@ public class GetController {
     public List<Bot> get() {
         return getService.get();
     }
+
+    @PostMapping("/user/bot/getone")
+    public Bot getone(Integer botId) {
+        return getService.getone(botId);
+    }
 }
