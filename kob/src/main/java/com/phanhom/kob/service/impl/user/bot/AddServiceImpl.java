@@ -54,7 +54,7 @@ public class AddServiceImpl implements AddService {
         }
 
         if(description == null || description.length() == 0) {
-            description = "这个用户很懒，什么还都没写～";
+            description = "-";
         }
 
         if(description.length() > 300) {
