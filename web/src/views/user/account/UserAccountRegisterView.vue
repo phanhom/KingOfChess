@@ -69,6 +69,7 @@ div.row {
     padding: 20px;
     border-radius: 12px;
     background-color: white;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
 }
 button {
     width: 100%;

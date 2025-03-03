@@ -20,7 +20,45 @@
                             创建Bot
                         </button>
 
-
+                        <!-- Modal -->
+                        <div class="modal fade" id="addbot" tabindex="-1">
+                            <div class="modal-dialog modal-xl">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h1 class="modal-title fs-5" id="addbot-title">创建Bot</h1>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                            aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="mb-3">
+                                            <!--  -->
+                                            <label for="addbot-botName" class="form-label">名称</label>
+                                            <input v-model="addbot.botName" type="text" class="form-control"
+                                                id="addbot-botName" placeholder="请输入Bot名称">
+                                        </div>
+                                        <!--  -->
+                                        <div class="mb-3">
+                                            <label for="addbot-description" class="form-label">简介</label>
+                                            <textarea v-model="addbot.description" class="form-control"
+                                                id="addbot-description" rows="3" placeholder="请输入Bot描述"></textarea>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="addbot-content" class="form-label">代码</label>
+                                            <!-- <textarea v-model="addbot.content" class="form-control" id="addbot-content"
+                                                rows="8" placeholder="请输入Bot代码"></textarea> -->
+                                            <VAceEditor v-model:value="addbot.content" lang="c_cpp" theme="textmate"
+                                                style="height: 300px" :options="{ fontSize: '16px' }"/>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <div class="error-message" style="color: red;">{{ addbot.error_message }}</div>
+                                        <button type="button" class="btn btn-primary" @click="addbot_func">提交</button>
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
+                                            @click="clear_error_message">关闭</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     <div class="card-body">
                         <table class="table table-striped table-hover">
@@ -72,9 +110,8 @@
                                                         </div>
                                                         <div class="mb-3">
                                                             <label for="updatebot-content" class="form-label">代码</label>
-                                                            <textarea v-model="bot.content" class="form-control"
-                                                                id="updatebot-content" rows="8"
-                                                                placeholder="请输入Bot代码">{{ bot.content }}</textarea>
+                                                            <VAceEditor v-model:value="bot.content" lang="c_cpp"
+                                                                theme="textmate" style="height: 300px" :options="{ fontSize: '16px' }"/>
                                                         </div>
                                                     </div>
                                                     <div class="modal-footer">
@@ -83,7 +120,8 @@
                                                         <button type="button" class="btn btn-primary"
                                                             @click="updatebot_func(bot)">提交</button>
                                                         <button type="button" class="btn btn-secondary"
-                                                            data-bs-dismiss="modal" @click="clear_error_message">关闭</button>
+                                                            data-bs-dismiss="modal"
+                                                            @click="clear_error_message">关闭</button>
                                                     </div>
                                                 </div>
                                             </div>
@@ -97,41 +135,7 @@
             </div>
         </div>
     </div>
-    <!-- Modal -->
-    <div class="modal fade" id="addbot" tabindex="-1">
-        <div class="modal-dialog modal-xl">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="addbot-title">创建Bot</h1>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="mb-3">
-                        <!--  -->
-                        <label for="addbot-botName" class="form-label">名称</label>
-                        <input v-model="addbot.botName" type="text" class="form-control" id="addbot-botName"
-                            placeholder="请输入Bot名称">
-                    </div>
-                    <!--  -->
-                    <div class="mb-3">
-                        <label for="addbot-description" class="form-label">简介</label>
-                        <textarea v-model="addbot.description" class="form-control" id="addbot-description" rows="3"
-                            placeholder="请输入Bot描述"></textarea>
-                    </div>
-                    <div class="mb-3">
-                        <label for="addbot-content" class="form-label">代码</label>
-                        <textarea v-model="addbot.content" class="form-control" id="addbot-content" rows="8"
-                            placeholder="请输入Bot代码"></textarea>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <div class="error-message" style="color: red;">{{ addbot.error_message }}</div>
-                    <button type="button" class="btn btn-primary" @click="addbot_func">提交</button>
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" @click="clear_error_message">关闭</button>
-                </div>
-            </div>
-        </div>
-    </div>
+
 </template>
 
 <script setup>
@@ -140,6 +144,15 @@ import axios from 'axios';
 import { useStore } from 'vuex';
 import { onMounted, ref, reactive } from 'vue';
 import { Modal } from 'bootstrap/dist/js/bootstrap'
+import { VAceEditor } from "vue3-ace-editor";
+import ace from "ace-builds";
+import("ace-builds/src-noconflict/mode-c_cpp"); // C++
+import("ace-builds/src-noconflict/theme-textmate"); // 主题
+
+// ace.config.set(
+//     "basePath",
+//     "https://cdn.jsdelivr.net/npm/ace-builds@" + require('ace-builds').version + "/src-noconflict/")
+ace.config.set("basePath", "https://cdn.jsdelivr.net/npm/ace-builds@1.4.12/src-noconflict/");
 
 const store = useStore();
 let bots = ref([]);
@@ -232,13 +245,13 @@ const refresh = () => {
         }
     }).then(res => {
         bots.value = res.data;
-        console.log(res.data);
+        // console.log(res.data);
     }).catch(err => {
         console.log(err);
     });
 }
 
-onMounted(() => {
+onMounted(async () => {
     refresh();
 });
 
