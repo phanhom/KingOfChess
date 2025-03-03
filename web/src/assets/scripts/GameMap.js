@@ -1,6 +1,8 @@
 import { GameObject } from "./GameObject.js";
 import { Wall } from "./Wall.js";
 import { plane } from "./plane.js";
+import { candy } from "./candy.js";
+
 // 要吃奖励得分 ????
 export class GameMap extends GameObject {
     constructor(ctx, parent) {
@@ -16,6 +18,14 @@ export class GameMap extends GameObject {
         this.walls = [];
         this.collision_eps = 0.6;
         this.bullet_collision_eps = 0.8;
+
+        this.candy = new candy(0, 0, this);
+
+        // 吃了就更新,不能在墙里面?
+        // 吃了加1分，倒计时1min，谁分高谁赢，然后打子弹消耗0.1分?
+ 
+        //记得刷新分数和重置?
+        //飞机撞了就重生并且减去1分?
 
         this.planes = [
             new plane({
@@ -68,13 +78,13 @@ export class GameMap extends GameObject {
 
         // random create walls(cnt)
         for (let i = 0; i < this.inner_walls_count / 2; i++) {
-            for (let j = 0; j < 1000; j++) {
+            for (let j = 0; j < 1500; j++) {
                 let r = parseInt(Math.random() * this.rows);
                 let c = parseInt(Math.random() * this.cols);
                 if (g[r][c] || g[c][r]) {
                     continue;
                 }
-                if ((r == this.rows - 2 && c == 1) || (r == 1 || c == this.cols - 2)) {
+                if ((r == this.rows - 2 && c == 1) || (r == 1 && c == this.cols - 2)) {
                     continue;
                 }
                 g[r][c] = g[c][r] = true;
@@ -117,29 +127,29 @@ export class GameMap extends GameObject {
         // console.log("check_valid => start");
         // 结束界面 + 倒计时 + 重新开始
         // 检查飞机相撞
-        if(Math.abs(this.planes[0].x - this.planes[1].x) < this.collision_eps && Math.abs(this.planes[0].y - this.planes[1].y) < this.collision_eps)
+        if (Math.abs(this.planes[0].x - this.planes[1].x) < this.collision_eps && Math.abs(this.planes[0].y - this.planes[1].y) < this.collision_eps)
             return false;
 
         // 检查飞机撞墙
-        for(const wall of this.walls) {
-            if((Math.abs(wall.r + 0.5 - pos_y) < this.collision_eps) && (Math.abs(wall.c + 0.5 - pos_x) < this.collision_eps)) {
+        for (const wall of this.walls) {
+            if ((Math.abs(wall.r + 0.5 - pos_y) < this.collision_eps) && (Math.abs(wall.c + 0.5 - pos_x) < this.collision_eps)) {
                 return false;
             }
         }
 
         // 检查子弹撞飞机
-        for(let plane of this.planes) {
-            for(let bullet of plane.bullets) {
-                if(bullet.status == "dead") continue;
-                for(const wall of this.walls) {
-                    if(wall.r == bullet.r && wall.c == bullet.c) {
+        for (let plane of this.planes) {
+            for (let bullet of plane.bullets) {
+                if (bullet.status == "dead") continue;
+                for (const wall of this.walls) {
+                    if (wall.r == bullet.r && wall.c == bullet.c) {
                         bullet.status = "dead";
                         // console.log("check_vaild() => bullet hit wall");
                     }
                 }
                 // 另一架飞机的子弹撞到我了, 所以如果是自己就跳过
-                if(plane.id == plane_id) continue;
-                if((Math.abs(bullet.x - pos_x) < this.bullet_collision_eps) && (Math.abs(bullet.y - pos_y) < this.bullet_collision_eps)) {
+                if (plane.id == plane_id) continue;
+                if ((Math.abs(bullet.x - pos_x) < this.bullet_collision_eps) && (Math.abs(bullet.y - pos_y) < this.bullet_collision_eps)) {
                     bullet.status = "dead";
                     console.log("check_valid() => bullet hit plane");
                     return false;
@@ -172,11 +182,12 @@ export class GameMap extends GameObject {
 
     start() {
         // this.init_walls();
-        for (let i = 0; i < 500000; i++)
+        for (let i = 0; i < 500000; i++) {
             if (this.init_walls()) {
                 break;
             }
-        
+        }
+        // this.candy = new candy(0, 0, this);
         this.add_listening_events();
     }
 
@@ -189,7 +200,7 @@ export class GameMap extends GameObject {
 
     update() {
         this.update_size();
-        if(this.check_ready()) {
+        if (this.check_ready()) {
             this.next_step();
         }
         this.render();

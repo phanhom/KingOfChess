@@ -7,6 +7,7 @@ export class plane extends GameObject {
 
         this.id = info.id;
         this.color = info.color;
+        this.score = 1;
         this.gamemap = gamemap;
         this.r = info.r;    // current pos r
         this.c = info.c;    // current pos c
@@ -38,6 +39,9 @@ export class plane extends GameObject {
     }
 
     shoot() {
+        if(this.score <= 0) return;
+        this.score -= 0.1;
+        this.score = this.score.toFixed(1);
         this.bullets.push(new Bullet(this.x, this.y, this.direction, this.speed, this.id));
     }
 
@@ -99,7 +103,6 @@ export class plane extends GameObject {
         ctx.translate(this.x * L, this.y * L);
         ctx.rotate(this.angle[this.direction]);
         ctx.fillStyle = this.color;
-        // ctx.fillRect((this.x - 0.5) * L, (this.y - 0.5) * L, L, L);
         ctx.drawImage(this.img, -0.5 * L, -0.5 * L, L, L);
         ctx.restore();
 

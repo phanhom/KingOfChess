@@ -11,7 +11,7 @@ import GameMap from "@/components/GameMap.vue"
 
 <style scoped>
 div.playground {
-    width: 60vw;
+    width: 80vw;
     height: 70vh;
     /* background-color: aqua; */
     margin: 50px auto;

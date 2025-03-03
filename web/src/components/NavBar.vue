@@ -2,7 +2,8 @@
   <nav class="navbar navbar-expand-lg bg-body-tertiary">
     <div class="container">
       <router-link to="/" class="navbar-brand">
-        <img src="@/assets/images/snake.ico" alt="Logo" width="30" height="24" class="d-inline-block align-text-top">
+        <img src="@/assets/images/brain.gif" alt="Logo" width="30" height="24" class="d-inline-block align-text-top">
+        <!-- <img src="@/assets/images/snake.ico" alt="Logo" width="30" height="24" class="d-inline-block align-text-top"> -->
         KOB
       </router-link>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarText"
@@ -26,6 +27,7 @@
         <ul class="navbar-nav" v-if="user.is_login">
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              <img :src="user.photo" alt="User Avatar" class="rounded-circle me-2" width="30" height="30">
               {{ user.username }}
             </a>
             <ul class="dropdown-menu">

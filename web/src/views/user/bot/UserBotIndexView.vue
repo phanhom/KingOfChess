@@ -149,9 +149,6 @@ import ace from "ace-builds";
 import("ace-builds/src-noconflict/mode-c_cpp"); // C++
 import("ace-builds/src-noconflict/theme-textmate"); // 主题
 
-// ace.config.set(
-//     "basePath",
-//     "https://cdn.jsdelivr.net/npm/ace-builds@" + require('ace-builds').version + "/src-noconflict/")
 ace.config.set("basePath", "https://cdn.jsdelivr.net/npm/ace-builds@1.4.12/src-noconflict/");
 
 const store = useStore();

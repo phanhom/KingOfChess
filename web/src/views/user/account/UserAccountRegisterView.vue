@@ -30,7 +30,7 @@ import { ref } from 'vue'
 import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
 import axios from "axios"
-// console.log('PkIndexView')
+// 创建提交图片的时候必须以png jpg jpeg结尾
 
 const username = ref('')
 const password = ref('')
