@@ -63,6 +63,7 @@ const parent = ref(null);
 const canvas = ref(null);
 const game_map = ref(null);
 
+// 到时候便变成国际象棋?
 // 响应式数据存储飞机信息
 // 左右两个card上显示作者头像名字，bot名字，rating?
 // 显示死亡信息，并且定时从新开始显示一个按钮，点击之后重新开始游戏? 
@@ -73,7 +74,7 @@ const plane1_score = ref(0);
 
 onMounted(() => {
     game_map.value = new GameMap(canvas.value.getContext('2d'), parent.value);
-    console.log(game_map.value)
+    // console.log(game_map.value)
 
     setInterval(() => {
         if (game_map.value) {

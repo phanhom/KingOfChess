@@ -23,6 +23,18 @@
             <router-link to="/ranklist"
               :class="routeName == 'ranklist_index' ? 'nav-link active' : 'nav-link'">排行榜</router-link>
           </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              小游戏
+            </a>
+            <ul class="dropdown-menu">
+              <li><router-link class="dropdown-item" to="/gamelist/chess">♟️国际象棋</router-link></li>
+              <li>
+                <hr class="dropdown-divider">
+              </li>
+              <li><a class="dropdown-item">待开发</a></li>
+            </ul>
+          </li>
         </ul>
         <ul class="navbar-nav" v-if="user.is_login">
           <li class="nav-item dropdown">

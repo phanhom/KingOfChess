@@ -7,6 +7,7 @@ import UserBotIndexView from '@/views/user/bot/UserBotIndexView.vue'
 import NotFound from '@/views/error/NotFound.vue'
 import UserAccountLoginView from '@/views/user/account/UserAccountLoginView.vue'
 import UserAccountRegisterView from '@/views/user/account/UserAccountRegisterView.vue'
+import ChessView from '@/views/gamelist/ChessView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -49,6 +50,14 @@ const router = createRouter({
       },
     },
     {
+      path: '/gamelist/chess',
+      name: 'gamelist_chess',
+      component: ChessView,
+      meta: {
+        requiresAuth: true,
+      },
+    },
+    {
       path: '/404',
       name: '404',
       component: NotFound,
@@ -80,12 +89,12 @@ const router = createRouter({
   ],
 })
 
-router.beforeEach((to, from, next) => {
+router.beforeEach(async(to, from, next) => {
   let flag = 1;
   const jwt_token = localStorage.getItem('jwt_token');
   if (jwt_token) {
-    store.commit("updateToken", jwt_token);
-    store.dispatch("getinfo", {
+    await store.commit("updateToken", jwt_token);
+    await store.dispatch("getinfo", {
       success: () => {
       },
       error: () => {
@@ -95,11 +104,12 @@ router.beforeEach((to, from, next) => {
         router.push({ name: 'user_account_login' });
       }
     });
+    // console.log("token: ", store.state.user.id);
   } else {
     flag = 2;
   }
 
-  
+
   if (to.meta.requiresAuth && !store.state.user.is_login) {
     if (flag == 1) {
       next();
