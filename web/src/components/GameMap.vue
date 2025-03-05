@@ -4,8 +4,7 @@
         <div class="card" style="width: 20%;">
             <div class="row">
                 <div class="col-6">
-                    <img src="https://userpic.codeforces.org/no-title.jpg" class="card-img-top" alt="..."
-                        style="width: 100%;">
+                    <img :src="store.state.user.photo" class="card-img-top" alt="...">
                 </div>
                 <div class="col-6">
                     <p class="card-text">姓名，最高bot胜率</p>
@@ -21,8 +20,7 @@
         <div class="card" style="width: 20%;">
             <div class="row">
                 <div class="col-6">
-                    <img src="https://userpic.codeforces.org/no-title.jpg" class="card-img-top" alt="..."
-                        style="width: 100%;">
+                    <img :src="store.state.pk.opponent_photo" class="card-img-top" alt="...">
                 </div>
                 <div class="col-6">
                     <p class="card-text">姓名，最高bot胜率</p>
@@ -58,10 +56,12 @@
 import { onMounted, ref } from 'vue'
 import { GameMap } from '@/assets/scripts/GameMap.js'
 import { Modal } from 'bootstrap/dist/js/bootstrap'
+import { useStore } from 'vuex';
 
 const parent = ref(null);
 const canvas = ref(null);
 const game_map = ref(null);
+const store = useStore();
 
 // 到时候便变成国际象棋?
 // 响应式数据存储飞机信息
@@ -78,6 +78,7 @@ onMounted(() => {
 
     setInterval(() => {
         if (game_map.value) {
+            // console.log("test");
             const [plane0, plane1] = game_map.value.planes;
 
             // 更新飞机分数
@@ -128,6 +129,16 @@ div.gamemap {
 }
 
 .row {
-    margin: 10px;
+    margin-top: 15px;
+    margin-left: 5px;
+    height: 100px;
+    /* margin: 10px; */
+}
+
+.card-img-top {
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 }
 </style>

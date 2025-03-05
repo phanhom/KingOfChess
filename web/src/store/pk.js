@@ -1,8 +1,8 @@
 import { createStore } from 'vuex';
 
-export default createStore({
+export default {
     state: {
-        status: 'matching', // matching, playing, idle
+        status: 'matching', // matching, playing, matched
         socket: null,
         opponent_username: '',
         opponent_photo: '',
@@ -25,4 +25,4 @@ export default createStore({
     },
     modules: {
     },
-});
+};

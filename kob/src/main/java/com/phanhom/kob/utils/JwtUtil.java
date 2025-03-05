@@ -55,4 +55,15 @@ public class JwtUtil {
                 .parseClaimsJws(jwt)  // **新版API，不再使用 parseClaimsJws(jwt).getBody()**
                 .getBody();
     }
+
+    public static Integer JWT2UserID(String jwtToken) {
+        String userid;
+        try {
+            Claims claims = JwtUtil.parseJWT(jwtToken);
+            userid = claims.getSubject();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        return Integer.parseInt(userid);
+    }
 }
