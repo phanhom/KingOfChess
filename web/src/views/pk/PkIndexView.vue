@@ -31,7 +31,8 @@ onMounted(() => {
         username: data.opponent_username,
         photo: data.opponent_photo,
       });
-      store.state.pk.status = "matched";
+      store.commit('updateGameMap', data.game_map);
+      store.commit('updateStatus', data.event);
       setTimeout(() => {
         store.state.pk.status = "playing";
       }, 2000);

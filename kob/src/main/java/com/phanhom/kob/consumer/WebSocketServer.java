@@ -28,6 +28,7 @@ public class WebSocketServer {
     final private static CopyOnWriteArraySet<User> matchPool = new CopyOnWriteArraySet<>();
     private User user;
     private Session session = null;
+    private Game game = null;
 
     private static UserMapper userMapper;
     @Autowired
@@ -71,16 +72,20 @@ public class WebSocketServer {
             matchPool.remove(a);
             matchPool.remove(b);
 
+            game = new Game(16, 16, 20);
+
             JSONObject resA = new JSONObject();
             resA.put("event", "matched");
             resA.put("opponent_username", b.getUsername());
             resA.put("opponent_photo", b.getPhoto());
+            resA.put("game_map", game.getG());  // 地图
             users.get(a.getId()).sendMessage(resA.toJSONString());
 
             JSONObject resB = new JSONObject();
             resB.put("event", "matched");
             resB.put("opponent_username", a.getUsername());
             resB.put("opponent_photo", a.getPhoto());
+            resB.put("game_map", game.getG());  // 地图
             users.get(b.getId()).sendMessage(resB.toJSONString());
         }
     }

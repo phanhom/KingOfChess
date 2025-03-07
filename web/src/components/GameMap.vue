@@ -8,6 +8,7 @@
                 </div>
                 <div class="col-6">
                     <p class="card-text">姓名，最高bot胜率</p>
+                    <h5 style="color: red;">5连胜</h5>
                 </div>
             </div>
             <div class="card-body">
@@ -24,6 +25,7 @@
                 </div>
                 <div class="col-6">
                     <p class="card-text">姓名，最高bot胜率</p>
+                    <h5 style="color: red;">5连胜</h5>
                 </div>
             </div>
             <div class="card-body">
@@ -73,7 +75,7 @@ const plane1_score = ref(0);
 
 
 onMounted(() => {
-    game_map.value = new GameMap(canvas.value.getContext('2d'), parent.value);
+    game_map.value = new GameMap(canvas.value.getContext('2d'), parent.value, store);
     // console.log(game_map.value)
 
     setInterval(() => {
