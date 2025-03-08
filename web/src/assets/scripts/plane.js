@@ -2,10 +2,11 @@ import { GameObject } from "./GameObject.js";
 import { Bullet } from "./Bullet.js";
 
 export class plane extends GameObject {
-    constructor(info, gamemap) {
+    constructor(info, gamemap, store) {
         super();
 
         this.id = info.id;
+        this.store = store;
         this.color = info.color;
         this.score = 1;
         this.gamemap = gamemap;
@@ -21,8 +22,8 @@ export class plane extends GameObject {
         this.img.src = "/images/BlueJet.png";
         if (this.id == 1) this.img.src = "/images/RedJet.png";
 
-        this.dr = [-1, 0, 1, 0];
-        this.dc = [0, 1, 0, -1];
+        this.dr = [-1, 0, 1, 0, 0];
+        this.dc = [0, 1, 0, -1, 0];
         this.angle = [-Math.PI / 2, 0, Math.PI / 2, Math.PI]
 
         this.step = 0;  // 回合数
@@ -42,7 +43,9 @@ export class plane extends GameObject {
         if(this.score <= 0) return;
         this.score -= 0.1;
         this.score = this.score.toFixed(1);
-        this.bullets.push(new Bullet(this.x, this.y, this.direction, this.speed, this.id));
+        // this.bullets.push(new Bullet(this.x, this.y, this.direction, this.speed, this.id));
+        bullet = this.store.state.pk.new_bullet;
+        this.bullets.push(new Bullet(bullet.x, bullet.y, bullet.direction, bullet.speed, bullet.id));
     }
 
     // 将飞机状态变成下一步
@@ -73,9 +76,20 @@ export class plane extends GameObject {
     }
 
     update_move() {
-        const move_distance = this.speed * this.timedelta / 1000;
-        this.x += this.dc[this.direction] * move_distance;
-        this.y += this.dr[this.direction] * move_distance;
+        // const move_distance = this.speed * this.timedelta / 1000;
+        // this.x += this.dc[this.direction] * move_distance;
+        // this.y += this.dr[this.direction] * move_distance;
+        if(this.id == 0) {
+            this.x = this.store.state.pk.p1_x;
+            this.y = this.store.state.pk.p1_y;
+            // console.log(this.x + '-')
+            // console.log(this.store.state.pk.p1_x)
+        } else {
+            // console.log(this.x + '0')
+            // console.log(this.store.state.pk.p2_x)
+            this.x = this.store.state.pk.p2_x;
+            this.y = this.store.state.pk.p2_y;
+        }
         this.r = Math.floor(this.y);
         this.c = Math.floor(this.x);
 
@@ -86,10 +100,10 @@ export class plane extends GameObject {
     }
 
     update() {
-        this.update_bullets_move();
-        if (this.status == "moving") {
-            this.update_move();
-        }
+        // this.update_bullets_move();
+        // if (this.status == "moving") {
+        //     this.update_move();
+        // }
 
         this.render();
     }

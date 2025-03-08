@@ -76,6 +76,7 @@ const plane1_score = ref(0);
 
 onMounted(() => {
     game_map.value = new GameMap(canvas.value.getContext('2d'), parent.value, store);
+    store.commit("updateGameObj", game_map.value)
     // console.log(game_map.value)
 
     setInterval(() => {

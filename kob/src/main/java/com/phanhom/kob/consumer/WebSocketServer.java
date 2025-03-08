@@ -23,7 +23,7 @@ import java.util.concurrent.CopyOnWriteArraySet;
 public class WebSocketServer {
 
     // 每个 id 对应 websocket
-    final private static ConcurrentHashMap<Integer, WebSocketServer> users = new ConcurrentHashMap<>();
+    final public static ConcurrentHashMap<Integer, WebSocketServer> users = new ConcurrentHashMap<>();
 
     final private static CopyOnWriteArraySet<User> matchPool = new CopyOnWriteArraySet<>();
     private User user;
@@ -72,7 +72,11 @@ public class WebSocketServer {
             matchPool.remove(a);
             matchPool.remove(b);
 
-            game = new Game(16, 16, 20);
+            game = new Game(16, 16, 20, a.getId(), b.getId());
+            users.get(a.getId()).game = game;
+            users.get(b.getId()).game = game;
+
+            game.start();
 
             JSONObject resA = new JSONObject();
             resA.put("event", "matched");
@@ -95,10 +99,25 @@ public class WebSocketServer {
         matchPool.remove(this.user);
     }
 
+    private void move(Integer direction) {
+//        System.out.println(game.getP1().getId());
+//        System.out.println(game.getP2().getId());
+//        System.out.println(this.user.getId());
+        if(game.getP1().getId().equals(this.user.getId())) {
+            game.setNextStepA(direction);
+        } else if (game.getP2().getId().equals(this.user.getId())) {
+            game.setNextStepB(direction);
+        }
+    }
+
+    private void shoot() {
+        game.sendBullet(this.user.getId());
+    }
+
     @OnMessage
     public void onMessage(String message, Session session) {
         // 从Client接收消息
-//        System.out.println("websocket receive message: " + message);
+        System.out.println("websocket receive message: " + message);
 
         JSONObject data = JSONObject.parseObject(message);
         String event = data.getString("event");
@@ -106,6 +125,10 @@ public class WebSocketServer {
             startMatching();
         } else if("stop-matching".equals(event)) {
             stopMatching();
+        } else if("move".equals(event)) {
+            move(data.getInteger("direction"));
+        } else if("shoot".equals(event)) {
+            shoot();
         }
     }
 

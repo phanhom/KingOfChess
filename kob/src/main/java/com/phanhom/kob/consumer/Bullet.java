@@ -4,17 +4,13 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Plane {
+public class Bullet {
     private Integer id;
-    private Integer direction;
     private double x, y;
     private double speed;
-    private double score;
-    private String status; // "idle", "moving", "dead"
+    private Integer direction;
+    private String status; // false 代表死亡 true 代表存活
 }

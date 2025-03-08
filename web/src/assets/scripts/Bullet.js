@@ -1,10 +1,10 @@
 export class Bullet {
-    constructor(x, y, d, plane_speed, id) {
+    constructor(x, y, d, speed, id) {
         this.x = x;
         this.y = y;
         this.c = Math.floor(x);
         this.r = Math.floor(y);
-        this.speed = 2 * plane_speed;
+        this.speed = speed;
         this.id = id;
 
         this.direction = d;

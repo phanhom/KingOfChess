@@ -34,71 +34,18 @@ export class GameMap extends GameObject {
                 color: "#4876FF",
                 r: this.rows - 2,
                 c: 1
-            }, this),
+            }, this, store),
 
             new plane({
                 id: 1,
                 color: "#FF4864",
                 r: 1,
                 c: this.cols - 2
-            }, this)
+            }, this, store)
         ];
     }
 
-    // check_connectivity(g, sx, sy, tx, ty) {
-    //     if (sx == tx && sy == ty) return true;
-    //     g[sx][sy] = true;
-
-    //     let dx = [-1, 0, 1, 0], dy = [0, 1, 0, -1];
-    //     for (let i = 0; i < 4; i++) {
-    //         let x = dx[i] + sx, y = dy[i] + sy;
-    //         if (!g[x][y] && this.check_connectivity(g, x, y, tx, ty)) {
-    //             return true;
-    //         }
-    //     }
-    //     return false;
-    // }
-
     init_walls() {
-        // const g = [];
-        // // init
-        // for (let r = 0; r < this.rows; r++) {
-        //     g[r] = [];
-        //     for (let c = 0; c < this.cols; c++) {
-        //         g[r][c] = false;
-        //     }
-        // }
-
-        // // borders
-        // for (let r = 0; r < this.rows; r++) {
-        //     g[r][0] = g[r][this.cols - 1] = true;
-        // }
-        // for (let c = 0; c < this.cols; c++) {
-        //     g[0][c] = g[this.rows - 1][c] = true;
-        // }
-
-        // // random create walls(cnt)
-        // for (let i = 0; i < this.inner_walls_count / 2; i++) {
-        //     for (let j = 0; j < 1500; j++) {
-        //         let r = parseInt(Math.random() * this.rows);
-        //         let c = parseInt(Math.random() * this.cols);
-        //         if (g[r][c] || g[c][r]) {
-        //             continue;
-        //         }
-        //         if ((r == this.rows - 2 && c == 1) || (r == 1 && c == this.cols - 2)) {
-        //             continue;
-        //         }
-        //         g[r][c] = g[c][r] = true;
-        //         break;
-        //     }
-        // }
-
-        // // check connectivity
-        // const copy_g = JSON.parse(JSON.stringify(g));
-        // if (!this.check_connectivity(copy_g, this.rows - 2, 1, 1, this.cols - 2)) {
-        //     return false;
-        // }
-
         const g = this.store.state.pk.game_map;
 
         // render
@@ -130,12 +77,19 @@ export class GameMap extends GameObject {
         // console.log("check_valid => start");
         // 结束界面 + 倒计时 + 重新开始
         // 检查飞机相撞
-        if (Math.abs(this.planes[0].x - this.planes[1].x) < this.collision_eps && Math.abs(this.planes[0].y - this.planes[1].y) < this.collision_eps)
+        if (Math.abs(this.planes[0].x - this.planes[1].x) < this.collision_eps && Math.abs(this.planes[0].y - this.planes[1].y) < this.collision_eps) {
+            console.log(this.planes[0].x)
+            console.log(this.planes[0].y)
+            console.log(this.planes[1].x)
+            console.log(this.planes[1].y)
+            console.log("check_valid() => plane hit plane");
             return false;
+        }
 
         // 检查飞机撞墙
         for (const wall of this.walls) {
             if ((Math.abs(wall.r + 0.5 - pos_y) < this.collision_eps) && (Math.abs(wall.c + 0.5 - pos_x) < this.collision_eps)) {
+                console.log("check_valid() => plane hit wall");
                 return false;
             }
         }
@@ -166,31 +120,44 @@ export class GameMap extends GameObject {
     add_listening_events() {
         this.ctx.canvas.focus();
 
-        const [plane0, plane1] = this.planes;
+        // const [plane0, plane1] = this.planes;
+        // this.ctx.canvas.addEventListener("keydown", e => {
+        //     e.preventDefault();
+        //     if (e.key === "w") plane0.set_direction(0);
+        //     else if (e.key == "d") plane0.set_direction(1);
+        //     else if (e.key == "s") plane0.set_direction(2);
+        //     else if (e.key == "a") plane0.set_direction(3);
+        //     else if (e.key == "j") plane0.shoot();
+        //     else if (e.key == "ArrowUp") plane1.set_direction(0);
+        //     else if (e.key == "ArrowRight") plane1.set_direction(1);
+        //     else if (e.key == "ArrowDown") plane1.set_direction(2);
+        //     else if (e.key == "ArrowLeft") plane1.set_direction(3);
+        //     else if (e.key == "1") plane1.shoot();
+        //     // console.log("add_listening_events => " + e.key);
+        // });
         this.ctx.canvas.addEventListener("keydown", e => {
-            e.preventDefault();
-            if (e.key === "w") plane0.set_direction(0);
-            else if (e.key == "d") plane0.set_direction(1);
-            else if (e.key == "s") plane0.set_direction(2);
-            else if (e.key == "a") plane0.set_direction(3);
-            else if (e.key == "j") plane0.shoot();
-            else if (e.key == "ArrowUp") plane1.set_direction(0);
-            else if (e.key == "ArrowRight") plane1.set_direction(1);
-            else if (e.key == "ArrowDown") plane1.set_direction(2);
-            else if (e.key == "ArrowLeft") plane1.set_direction(3);
-            else if (e.key == "1") plane1.shoot();
-            // console.log("add_listening_events => " + e.key);
+            let d = -1;
+            if (e.key === "w") d = 0;
+            else if (e.key == "d") d = 1;
+            else if (e.key == "s") d = 2;
+            else if (e.key == "a") d = 3;
+            else if (e.key == "j") {
+                this.store.state.pk.socket.send(JSON.stringify({
+                    event: "shoot",
+                }));
+            }
+            if (d >= 0) {
+                this.store.state.pk.socket.send(JSON.stringify({
+                    event: "move",
+                    direction: d,
+                }));
+            }
+            console.log(d);
         });
     }
 
     start() {
         this.init_walls();
-        // for (let i = 0; i < 500000; i++) {
-        //     if (this.init_walls()) {
-        //         break;
-        //     }
-        // }
-        // this.candy = new candy(0, 0, this);
         this.add_listening_events();
     }
 
@@ -203,9 +170,9 @@ export class GameMap extends GameObject {
 
     update() {
         this.update_size();
-        if (this.check_ready()) {
-            this.next_step();
-        }
+        // if (this.check_ready()) {
+        //     this.next_step();
+        // }
         this.render();
     }
 
