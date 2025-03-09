@@ -48,6 +48,8 @@ onMounted(() => {
       // console.log(data.gamedata);
     } else if (data.event == 'shoot') {
       store.commit('updateBullets', data.bullet)
+    } else if (data.event == 'game_over') {
+      store.commit('updateResult', data.result);
     }
   }
 });

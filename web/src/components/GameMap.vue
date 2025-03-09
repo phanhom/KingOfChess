@@ -89,11 +89,16 @@ onMounted(() => {
             plane1_score.value = plane1.score;
 
             // 不能重新开始，而是等时间结束才重新开始?
-            if (winner.value == "" && (plane0.status == "dead" || plane1.status == "dead")) {
-                if (plane0.status == "dead" && plane1.status == "dead") {
+            if (winner.value == "" && store.state.pk.result != "none") {
+                // if (plane0.status == "dead" && plane1.status == "dead") {
+                //     winner.value = "平局, 没有玩家";
+                // } else {
+                //     winner.value = plane0.status == "dead" ? "红方" : "蓝方";
+                // }
+                if(store.state.pk.result == "deuce") {
                     winner.value = "平局, 没有玩家";
                 } else {
-                    winner.value = plane0.status == "dead" ? "红方" : "蓝方";
+                    winner.value = store.state.pk.result == "p2" ? "红方" : "蓝方";
                 }
                 console.log("游戏结束");
                 showModal();

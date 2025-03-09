@@ -77,22 +77,22 @@ export class GameMap extends GameObject {
         // console.log("check_valid => start");
         // 结束界面 + 倒计时 + 重新开始
         // 检查飞机相撞
-        if (Math.abs(this.planes[0].x - this.planes[1].x) < this.collision_eps && Math.abs(this.planes[0].y - this.planes[1].y) < this.collision_eps) {
-            console.log(this.planes[0].x)
-            console.log(this.planes[0].y)
-            console.log(this.planes[1].x)
-            console.log(this.planes[1].y)
-            console.log("check_valid() => plane hit plane");
-            return false;
-        }
+        // if (Math.abs(this.planes[0].x - this.planes[1].x) < this.collision_eps && Math.abs(this.planes[0].y - this.planes[1].y) < this.collision_eps) {
+        //     console.log(this.planes[0].x)
+        //     console.log(this.planes[0].y)
+        //     console.log(this.planes[1].x)
+        //     console.log(this.planes[1].y)
+        //     console.log("check_valid() => plane hit plane");
+        //     return false;
+        // }
 
         // 检查飞机撞墙
-        for (const wall of this.walls) {
-            if ((Math.abs(wall.r + 0.5 - pos_y) < this.collision_eps) && (Math.abs(wall.c + 0.5 - pos_x) < this.collision_eps)) {
-                console.log("check_valid() => plane hit wall");
-                return false;
-            }
-        }
+        // for (const wall of this.walls) {
+        //     if ((Math.abs(wall.r + 0.5 - pos_y) < this.collision_eps) && (Math.abs(wall.c + 0.5 - pos_x) < this.collision_eps)) {
+        //         console.log("check_valid() => plane hit wall");
+        //         return false;
+        //     }
+        // }
 
         // 检查子弹撞飞机
         for (let plane of this.planes) {
@@ -109,10 +109,14 @@ export class GameMap extends GameObject {
                 if ((Math.abs(bullet.x - pos_x) < this.bullet_collision_eps) && (Math.abs(bullet.y - pos_y) < this.bullet_collision_eps)) {
                     bullet.status = "dead";
                     console.log("check_valid() => bullet hit plane");
-                    return false;
+                    // return false;
                 }
             }
         }
+        // console.log(this.store.state.pk.status);
+        if(this.store.state.pk.result === "deuce") return false;
+        if(this.store.state.pk.result === "p1" && this.id === 1) return false;
+        if(this.store.state.pk.result === "p2" && this.id === 0) return false;
         // console.log("check_valid => end");
         return true;
     }
@@ -173,6 +177,7 @@ export class GameMap extends GameObject {
         // if (this.check_ready()) {
         //     this.next_step();
         // }
+        this.next_step();
         this.render();
     }
 

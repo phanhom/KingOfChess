@@ -3,6 +3,7 @@ import { createStore } from 'vuex';
 export default {
     state: {
         status: 'matching', // matching, playing, matched
+        result: 'none', // p1, p2, deuce
         socket: null,
         opponent_username: '',
         opponent_photo: '',
@@ -53,6 +54,9 @@ export default {
         },
         updateBullets(state, bullet) {
             state.new_bullet = bullet;
+        },
+        updateResult(state, result) {
+            state.result = result;
         },
     },
     actions: {

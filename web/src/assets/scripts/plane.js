@@ -104,6 +104,7 @@ export class plane extends GameObject {
         // if (this.status == "moving") {
         //     this.update_move();
         // }
+        this.update_move();
 
         this.render();
     }

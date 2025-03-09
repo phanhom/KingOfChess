@@ -11,8 +11,10 @@ public class Game extends Thread {
     private final Integer cols;
     private final Integer inner_walls_count;
     private final int[][] g;
-    private static final Integer timeDelta = 1000;
+    private static final Integer timeDelta = 30;
     private final static int[] dx = {0, 1, 0, -1, 0}, dy = {-1, 0, 1, 0, 0};
+    private final static double collision_eps = 0.5; // 碰撞检测的精度
+    private final static double bullet_collision_eps = 0.3; // 子弹碰撞检测的精度
     private final Plane p1, p2;
     private String status = "playing";
     private Integer nextStepA = 1, nextStepB = 1;
@@ -161,6 +163,8 @@ public class Game extends Thread {
         lock.lock();
         try {
             if(p1.getStatus() == "moving") {
+//                System.out.println("--------");
+//                System.out.println(p1.getX());
                 double moveDistance1 = p1.getSpeed() * timeDelta / 1000;
                 p1.setX(p1.getX() + dx[p1.getDirection()] * moveDistance1);
                 p1.setY(p1.getY() + dy[p1.getDirection()] * moveDistance1);
@@ -176,11 +180,87 @@ public class Game extends Thread {
         } finally {
             lock.unlock();
         }
+
+    }
+
+    private boolean checkValid() {
+        lock.lock();
+        try {
+            // 检查飞机相撞
+            if (Math.abs(p1.getX() - p2.getX()) < collision_eps && Math.abs(p1.getY() - p2.getY()) < collision_eps) {
+//                System.out.println(p1.getX());
+//                System.out.println(p1.getY());
+//                System.out.println(p2.getX());
+//                System.out.println(p2.getY());
+                System.out.println("check_valid() => plane hit plane");
+                status = "deuce"; // 设置游戏状态为结束
+                return false;
+            }
+
+            // 检查飞机撞墙
+            for (int r = 0; r < rows; r++) {
+                for (int c = 0; c < cols; c++) {
+                    if (g[r][c] == 1) { // 墙的位置
+                        if (Math.abs(r + 0.5 - p1.getY()) < collision_eps && Math.abs(c + 0.5 - p1.getX()) < collision_eps) {
+                            System.out.println("check_valid() => plane hit wall (p1)");
+                            status = "p2";
+                            return false;
+                        }
+                        if (Math.abs(r + 0.5 - p2.getY()) < collision_eps && Math.abs(c + 0.5 - p2.getX()) < collision_eps) {
+                            System.out.println("check_valid() => plane hit wall (p2)");
+                            status = "p1";
+                            return false;
+                        }
+                    }
+                }
+            }
+
+            // 检查子弹撞飞机
+            for (Bullet bullet : bullets) {
+                if (bullet.getStatus().equals("dead")) continue;
+
+                // 检查子弹撞墙
+                for (int r = 0; r < rows; r++) {
+                    for (int c = 0; c < cols; c++) {
+                        if (g[r][c] == 1 && (int) bullet.getY() == r && (int) bullet.getX() == c) {
+                            bullet.setStatus("dead");
+                            break;
+                        }
+                    }
+                    if (bullet.getStatus().equals("dead")) break;
+                }
+                if (bullet.getStatus().equals("dead")) break;
+
+                // 检查子弹撞飞机
+                if (bullet.getId() != p1.getId() && Math.abs(bullet.getX() - p1.getX()) < bullet_collision_eps && Math.abs(bullet.getY() - p1.getY()) < bullet_collision_eps) {
+                    bullet.setStatus("dead");
+                    System.out.println("check_valid() => bullet hit plane (p2)");
+                    status = "p2";
+                    return false;
+                }
+                if (bullet.getId() != p2.getId() && Math.abs(bullet.getX() - p2.getX()) < bullet_collision_eps && Math.abs(bullet.getY() - p2.getY()) < bullet_collision_eps) {
+                    bullet.setStatus("dead");
+                    System.out.println("check_valid() => bullet hit plane (p2)");
+                    status = "p1";
+                    return false;
+                }
+            }
+        } finally {
+            lock.unlock();
+        }
+        return true;
     }
 
     private void updateBullets() {
         lock.lock();
-        try {//
+        try {
+            for (Bullet bullet : bullets) {
+                if (bullet.getStatus().equals("dead")) continue;
+
+                double moveDistance = bullet.getSpeed() * timeDelta / 1000.0;
+                bullet.setX(bullet.getX() + dx[bullet.getDirection()] * moveDistance);
+                bullet.setY(bullet.getY() + dy[bullet.getDirection()] * moveDistance);
+            }
         } finally {
             lock.unlock();
         }
@@ -249,11 +329,31 @@ public class Game extends Thread {
         }
     }
 
+    private void sendResult() {
+        lock.lock();
+        try {
+            JSONObject resp = new JSONObject();
+//            JSONObject result = new JSONObject();
+            resp.put("event", "game_over");
+//            result.put("result", status);
+            resp.put("result", status);
+//            System.out.println(resp.toJSONString());
+            sendMessage(resp.toJSONString());
+        } finally {
+            lock.unlock();
+        }
+    }
+
     @Override
     public void run() {
         for (int i = 0; i < 100000; i++) {
             updateMove();
             sendMove();
+            if (!checkValid()) {
+                System.out.println("游戏结束--------");
+                sendResult();
+                break;
+            }
             try {
                 Thread.sleep(timeDelta);
             } catch (InterruptedException e) {
