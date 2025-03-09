@@ -43,9 +43,14 @@ export class plane extends GameObject {
         if(this.score <= 0) return;
         this.score -= 0.1;
         this.score = this.score.toFixed(1);
-        // this.bullets.push(new Bullet(this.x, this.y, this.direction, this.speed, this.id));
-        bullet = this.store.state.pk.new_bullet;
-        this.bullets.push(new Bullet(bullet.x, bullet.y, bullet.direction, bullet.speed, bullet.id));
+        if(this.store.state.pk.new_bullet_arrive) {
+            let bullet = this.store.state.pk.new_bullet;
+            if(bullet.id == this.store.state.user.id) {
+                console.log(bullet)
+                this.bullets.push(new Bullet(bullet.x, bullet.y, bullet.direction, bullet.speed, bullet.id));
+                this.store.state.pk.new_bullet_arrive = false;
+            }
+        }
     }
 
     // 将飞机状态变成下一步
@@ -67,40 +72,35 @@ export class plane extends GameObject {
             bullet.y += this.dr[bullet.direction] * move_distance;
             bullet.r = Math.floor(bullet.x);
             bullet.c = Math.floor(bullet.y);
+            console.log(bullet.x, bullet.y);
         }
 
         if (!this.gamemap.check_valid(this.x, this.y, this.id)) {
             this.status = "dead";
-            // console.log("dead" + this.x);
         }
     }
 
     update_move() {
-        // const move_distance = this.speed * this.timedelta / 1000;
-        // this.x += this.dc[this.direction] * move_distance;
-        // this.y += this.dr[this.direction] * move_distance;
         if(this.id == 0) {
             this.x = this.store.state.pk.p1_x;
             this.y = this.store.state.pk.p1_y;
-            // console.log(this.x + '-')
-            // console.log(this.store.state.pk.p1_x)
         } else {
-            // console.log(this.x + '0')
-            // console.log(this.store.state.pk.p2_x)
             this.x = this.store.state.pk.p2_x;
             this.y = this.store.state.pk.p2_y;
         }
         this.r = Math.floor(this.y);
         this.c = Math.floor(this.x);
+        if(this.id == 0) {
+            // console.log(this.x, this.y);
+        }
 
         if (!this.gamemap.check_valid(this.x, this.y, this.id)) {
             this.status = "dead";
-            // console.log("dead" + this.x);
         }
     }
 
     update() {
-        // this.update_bullets_move();
+        this.update_bullets_move();
         // if (this.status == "moving") {
         //     this.update_move();
         // }
@@ -120,6 +120,9 @@ export class plane extends GameObject {
         ctx.fillStyle = this.color;
         ctx.drawImage(this.img, -0.5 * L, -0.5 * L, L, L);
         ctx.restore();
+        // if(this.id == 0) {
+            // console.log(this.x, this.y);
+        // }
 
         // 渲染子弹
         ctx.fillStyle = "black";

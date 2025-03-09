@@ -81,7 +81,6 @@ onMounted(() => {
 
     setInterval(() => {
         if (game_map.value) {
-            // console.log("test");
             const [plane0, plane1] = game_map.value.planes;
 
             // 更新飞机分数
@@ -90,11 +89,6 @@ onMounted(() => {
 
             // 不能重新开始，而是等时间结束才重新开始?
             if (winner.value == "" && store.state.pk.result != "none") {
-                // if (plane0.status == "dead" && plane1.status == "dead") {
-                //     winner.value = "平局, 没有玩家";
-                // } else {
-                //     winner.value = plane0.status == "dead" ? "红方" : "蓝方";
-                // }
                 if(store.state.pk.result == "deuce") {
                     winner.value = "平局, 没有玩家";
                 } else {

@@ -110,6 +110,7 @@ export class GameMap extends GameObject {
                     bullet.status = "dead";
                     console.log("check_valid() => bullet hit plane");
                     // return false;
+                    // 把这个移动到plane类里面来只更新子弹的位置
                 }
             }
         }
@@ -149,6 +150,9 @@ export class GameMap extends GameObject {
                 this.store.state.pk.socket.send(JSON.stringify({
                     event: "shoot",
                 }));
+                this.planes[0].shoot();
+                this.planes[1].shoot();
+                console.log("shoot");
             }
             if (d >= 0) {
                 this.store.state.pk.socket.send(JSON.stringify({

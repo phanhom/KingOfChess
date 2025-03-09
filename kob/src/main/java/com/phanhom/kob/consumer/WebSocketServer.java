@@ -58,9 +58,15 @@ public class WebSocketServer {
         // 关闭链接
         System.out.println("websocket offline");
         if(this.user != null) {
+            // 判定输了?
+            whiteFlag();
             users.remove(this.user.getId());
             matchPool.remove(this.user);
         }
+    }
+
+    private void whiteFlag() {
+        game.whiteFlag(this.user.getId());
     }
 
     private void startMatching() {

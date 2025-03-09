@@ -29,8 +29,8 @@ public class Game extends Thread {
         this.g = new int[rows][cols];
         this.createMap();
         // 类似于第四象限 x = col, y = rows
-        p1 = new Plane(idA, 4, 1 + 0.5, rows - 2 + 0.5, 4, 2, "idle");
-        p2 = new Plane(idB, 4, cols - 2 + 0.5, 1 + 0.5, 4, 2, "idle");
+        p1 = new Plane(idA, 0, 1 + 0.5, rows - 2 + 0.5, 4, 2, "idle");
+        p2 = new Plane(idB, 2, cols - 2 + 0.5, 1 + 0.5, 4, 2, "idle");
     }
 
     public Plane getP1() {
@@ -186,6 +186,7 @@ public class Game extends Thread {
     private boolean checkValid() {
         lock.lock();
         try {
+            if(!status.equals("playing")) return false;
             // 检查飞机相撞
             if (Math.abs(p1.getX() - p2.getX()) < collision_eps && Math.abs(p1.getY() - p2.getY()) < collision_eps) {
 //                System.out.println(p1.getX());
@@ -223,6 +224,7 @@ public class Game extends Thread {
                 for (int r = 0; r < rows; r++) {
                     for (int c = 0; c < cols; c++) {
                         if (g[r][c] == 1 && (int) bullet.getY() == r && (int) bullet.getX() == c) {
+                            System.out.println("check_valid() => 子弹撞墙上了");
                             bullet.setStatus("dead");
                             break;
                         }
@@ -260,7 +262,19 @@ public class Game extends Thread {
                 double moveDistance = bullet.getSpeed() * timeDelta / 1000.0;
                 bullet.setX(bullet.getX() + dx[bullet.getDirection()] * moveDistance);
                 bullet.setY(bullet.getY() + dy[bullet.getDirection()] * moveDistance);
+//                System.out.println(bullet.getX());
+//                System.out.println(bullet.getY());
             }
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    public void whiteFlag(Integer id) {
+        lock.lock();
+        try {
+            if (id.equals(p1.getId())) status = "p2";
+            if (id.equals(p2.getId())) status = "p1";
         } finally {
             lock.unlock();
         }
@@ -279,6 +293,7 @@ public class Game extends Thread {
                 p2.setScore(p2.getScore() - 0.1);
                 bullet = new Bullet(p2.getId(), p2.getX(), p2.getY(), 2 * p2.getSpeed(), p2.getDirection(), "alive");
             }
+//            System.out.println(bullet);
             bullets.add(bullet);
             JSONObject resp = new JSONObject();
             resp.put("event", "shoot");
@@ -316,6 +331,8 @@ public class Game extends Thread {
             gamedata.put("p1_direction", p1.getDirection());
             gamedata.put("p1_x", p1.getX());
             gamedata.put("p1_y", p1.getY());
+//            System.out.println("p1x    " + p1.getX());
+//            System.out.println("p1y    " + p1.getY());
             gamedata.put("p2_id", p2.getId());
             gamedata.put("p2_direction", p2.getDirection());
             gamedata.put("p2_score", p2.getScore());
@@ -347,6 +364,7 @@ public class Game extends Thread {
     @Override
     public void run() {
         for (int i = 0; i < 100000; i++) {
+            updateBullets();
             updateMove();
             sendMove();
             if (!checkValid()) {

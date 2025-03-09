@@ -20,6 +20,7 @@ export default {
         p2_y: null,
         p2_direction: null,
         new_bullet: null,
+        new_bullet_arrive: false,
         // candy_x: null,
         // candy_y: null,
     },
@@ -54,6 +55,7 @@ export default {
         },
         updateBullets(state, bullet) {
             state.new_bullet = bullet;
+            state.new_bullet_arrive = true;
         },
         updateResult(state, result) {
             state.result = result;
