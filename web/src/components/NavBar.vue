@@ -4,7 +4,7 @@
       <router-link to="/" class="navbar-brand">
         <img src="@/assets/images/brain.gif" alt="Logo" width="30" height="24" class="d-inline-block align-text-top">
         <!-- <img src="@/assets/images/snake.ico" alt="Logo" width="30" height="24" class="d-inline-block align-text-top"> -->
-        KOB
+        PHD
       </router-link>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarText"
         aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
