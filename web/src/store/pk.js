@@ -21,8 +21,11 @@ export default {
         p2_direction: null,
         new_bullet: null,
         new_bullet_arrive: false,
-        // candy_x: null,
-        // candy_y: null,
+        candy_x: null,
+        candy_y: null,
+        new_candy_arrive: false,
+        total_time: null,
+        time_used: null,
     },
     mutations: {
         updateSocket(state, socket) {
@@ -59,6 +62,15 @@ export default {
         },
         updateResult(state, result) {
             state.result = result;
+        },
+        updateCandy(state, candy) {
+            state.candy_x = candy.candy_x;
+            state.candy_y = candy.candy_y;
+            state.new_candy_arrive = true;
+        },
+        updateTime(state, time) {
+            state.total_time = time.total,
+            state.time_used = time.used;
         },
     },
     actions: {

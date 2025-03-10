@@ -50,6 +50,10 @@ onMounted(() => {
       store.commit('updateBullets', data.bullet)
     } else if (data.event == 'game_over') {
       store.commit('updateResult', data.result);
+    } else if (data.event == 'candy') {
+      store.commit('updateCandy', data.candy)
+    } else if (data.event == 'time_update') {
+      store.commit('updateTime', data.time) // ?
     }
   }
 });

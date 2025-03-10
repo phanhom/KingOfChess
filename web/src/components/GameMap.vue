@@ -52,6 +52,14 @@
             </div>
         </div>
     </div>
+    <div class="progress">
+    <div class="progress-bar" role="progressbar"
+        :style="{ width: (store.state.pk.time_used / store.state.pk.total_time) * 100 + '%' }"
+        aria-valuenow="store.state.pk.time_used"
+        aria-valuemin="0"
+        :aria-valuemax="store.state.pk.total_time">
+    </div>
+</div>
 </template>
 
 <script setup>
@@ -89,7 +97,7 @@ onMounted(() => {
 
             // 不能重新开始，而是等时间结束才重新开始?
             if (winner.value == "" && store.state.pk.result != "none") {
-                if(store.state.pk.result == "deuce") {
+                if (store.state.pk.result == "deuce") {
                     winner.value = "平局, 没有玩家";
                 } else {
                     winner.value = store.state.pk.result == "p2" ? "红方" : "蓝方";
@@ -143,4 +151,18 @@ div.gamemap {
     border-radius: 50%;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 }
+.progress {
+    width: 100%;
+    height: 20px;
+    background-color: #e0e0e0;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.progress-bar {
+    height: 100%;
+    background-color: #007bff;
+    transition: width 0.1s linear;
+}
+
 </style>

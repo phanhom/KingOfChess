@@ -40,13 +40,13 @@ export class plane extends GameObject {
     }
 
     shoot() {
-        if(this.score <= 0) return;
-        this.score -= 0.1;
-        this.score = this.score.toFixed(1);
         if(this.store.state.pk.new_bullet_arrive) {
+            if(this.score <= 0) return;
+            this.score -= 0.1;
+            this.score = this.score.toFixed(1);
             let bullet = this.store.state.pk.new_bullet;
             if(bullet.id == this.store.state.user.id) {
-                console.log(bullet)
+                // console.log(bullet)
                 this.bullets.push(new Bullet(bullet.x, bullet.y, bullet.direction, bullet.speed, bullet.id));
                 this.store.state.pk.new_bullet_arrive = false;
             }
@@ -72,7 +72,7 @@ export class plane extends GameObject {
             bullet.y += this.dr[bullet.direction] * move_distance;
             bullet.r = Math.floor(bullet.x);
             bullet.c = Math.floor(bullet.y);
-            console.log(bullet.x, bullet.y);
+            // console.log(bullet.x, bullet.y);
         }
 
         if (!this.gamemap.check_valid(this.x, this.y, this.id)) {
@@ -100,6 +100,7 @@ export class plane extends GameObject {
     }
 
     update() {
+        this.shoot();
         this.update_bullets_move();
         // if (this.status == "moving") {
         //     this.update_move();

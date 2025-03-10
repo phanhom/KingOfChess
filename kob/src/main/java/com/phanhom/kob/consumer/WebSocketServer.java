@@ -47,7 +47,7 @@ public class WebSocketServer {
 
         if(user != null) {
             users.put(userId, this);
-            System.out.println(users);
+//            System.out.println(users);
         } else {
             this.session.close();
         }
@@ -56,7 +56,7 @@ public class WebSocketServer {
     @OnClose
     public void onClose() {
         // 关闭链接
-        System.out.println("websocket offline");
+//        System.out.println("websocket offline");
         if(this.user != null) {
             // 判定输了?
             whiteFlag();
@@ -66,6 +66,7 @@ public class WebSocketServer {
     }
 
     private void whiteFlag() {
+        if(this.game == null) return;
         game.whiteFlag(this.user.getId());
     }
 

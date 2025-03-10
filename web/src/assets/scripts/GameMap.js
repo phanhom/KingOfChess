@@ -20,7 +20,7 @@ export class GameMap extends GameObject {
         this.collision_eps = 0.6;
         this.bullet_collision_eps = 0.8;
 
-        this.candy = new candy(0, 0, this);
+        this.candy = new candy(0, 0, this, this.store);
 
         // 吃了就更新,不能在墙里面?
         // 吃了加1分，倒计时1min，谁分高谁赢，然后打子弹消耗0.1分?
@@ -152,7 +152,7 @@ export class GameMap extends GameObject {
                 }));
                 this.planes[0].shoot();
                 this.planes[1].shoot();
-                console.log("shoot");
+                // console.log("shoot");
             }
             if (d >= 0) {
                 this.store.state.pk.socket.send(JSON.stringify({
@@ -160,7 +160,7 @@ export class GameMap extends GameObject {
                     direction: d,
                 }));
             }
-            console.log(d);
+            // console.log(d);
         });
     }
 

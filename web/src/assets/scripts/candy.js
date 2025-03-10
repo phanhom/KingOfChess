@@ -1,8 +1,9 @@
 import { GameObject } from "./GameObject.js";
 
 export class candy extends GameObject {
-    constructor(r, c, gamemap) {
+    constructor(r, c, gamemap, store) {
         super();
+        this.store = store;
         this.r = r;
         this.c = c;
         this.gamemap = gamemap;
@@ -14,6 +15,14 @@ export class candy extends GameObject {
 
     refresh_candy_pos() {
         // if (!this.just_eaten) return;
+        // console.log(this.store.state.pk.new_candy_arrive == true);
+        if(this.store.state.pk.new_candy_arrive == true) {
+            this.store.state.pk.new_candy_arrive = false;
+            this.c = this.store.state.pk.candy_x;
+            this.r = this.store.state.pk.candy_y;
+            // console.log(this.c, this.r);
+        }
+        return;
         while (true) {
             let r = parseInt(Math.random() * this.gamemap.rows);
             let c = parseInt(Math.random() * this.gamemap.cols);
@@ -41,15 +50,15 @@ export class candy extends GameObject {
         }
     }
 
-    check_eat(pos_x, pos_y, plane_id) {
-        if (parseInt(pos_x) == this.c && parseInt(pos_y) == this.r) {
-            console.log("candy eaten");
-            this.gamemap.planes[plane_id].score++;
-            console.log("plane" + plane_id + "eat candy")
-            return true;
-        }
-        return false;
-    }
+    // check_eat(pos_x, pos_y, plane_id) {
+    //     if (parseInt(pos_x) == this.c && parseInt(pos_y) == this.r) {
+    //         console.log("candy eaten");
+    //         this.gamemap.planes[plane_id].score++;
+    //         console.log("plane" + plane_id + "eat candy")
+    //         return true;
+    //     }
+    //     return false;
+    // }
 
     start() {
         this.refresh_candy_pos();
@@ -57,11 +66,12 @@ export class candy extends GameObject {
 
     update() {
         // console.log("candy update");
-        if (this.check_eat(this.gamemap.planes[0].x, this.gamemap.planes[0].y, 0)) {
-            this.refresh_candy_pos();
-        } else if (this.check_eat(this.gamemap.planes[1].x, this.gamemap.planes[1].y, 1)) {
-            this.refresh_candy_pos();
-        }
+        // if (this.check_eat(this.gamemap.planes[0].x, this.gamemap.planes[0].y, 0)) {
+        //     this.refresh_candy_pos();
+        // } else if (this.check_eat(this.gamemap.planes[1].x, this.gamemap.planes[1].y, 1)) {
+        //     this.refresh_candy_pos();
+        // }
+        this.refresh_candy_pos();
         this.render();
     }
 

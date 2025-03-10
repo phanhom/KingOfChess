@@ -17,7 +17,7 @@ public class UpdateController {
 
     @PostMapping("/user/bot/update")
     public Map<String, String> update(@RequestBody Map<String, String> map) {
-        System.out.println(map);
+//        System.out.println(map);
         return updateService.update(map);
     }
 }

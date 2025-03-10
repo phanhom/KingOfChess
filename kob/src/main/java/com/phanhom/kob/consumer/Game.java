@@ -11,13 +11,16 @@ public class Game extends Thread {
     private final Integer cols;
     private final Integer inner_walls_count;
     private final int[][] g;
-    private static final Integer timeDelta = 30;
+    private static final Integer timeDelta = 25;
     private final static int[] dx = {0, 1, 0, -1, 0}, dy = {-1, 0, 1, 0, 0};
     private final static double collision_eps = 0.5; // 碰撞检测的精度
     private final static double bullet_collision_eps = 0.3; // 子弹碰撞检测的精度
     private final Plane p1, p2;
+    private Integer candy_x = -1, candy_y = -1;
+    private Integer eaten = -1;
     private String status = "playing";
     private Integer nextStepA = 1, nextStepB = 1;
+    private Integer totalTime = 2400, timeUsed = 0;
     private ArrayList<Bullet> bullets = new ArrayList<>();
 //    private
     private ReentrantLock lock = new ReentrantLock();
@@ -183,10 +186,20 @@ public class Game extends Thread {
 
     }
 
-    private boolean checkValid() {
+    private boolean checkValid(boolean time_over) {
         lock.lock();
         try {
             if(!status.equals("playing")) return false;
+            if(time_over) {
+                if(p1.getScore() == p2.getScore()) {
+                    status = "deuce";
+                } else if (p1.getScore() > p2.getScore()) {
+                    status = "p1";
+                } else {
+                    status = "p2";
+                }
+                return false;
+            }
             // 检查飞机相撞
             if (Math.abs(p1.getX() - p2.getX()) < collision_eps && Math.abs(p1.getY() - p2.getY()) < collision_eps) {
 //                System.out.println(p1.getX());
@@ -264,6 +277,73 @@ public class Game extends Thread {
                 bullet.setY(bullet.getY() + dy[bullet.getDirection()] * moveDistance);
 //                System.out.println(bullet.getX());
 //                System.out.println(bullet.getY());
+            }
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    private void checkEat() {
+        lock.lock();
+        try {
+            if((int) p1.getX() == candy_x && (int) p1.getY() == candy_y) {
+                p1.setScore(p1.getScore() + 1);
+                eaten = 1;
+                System.out.println("eaten");
+            } else if ((int) p2.getX() == candy_x && (int) p2.getY() == candy_y) {
+                p2.setScore(p2.getScore() + 1);
+                eaten = 2;
+            }
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    private void updateCandy() {
+        lock.lock();
+        try {
+            if(eaten != -1 || (candy_x == -1 && candy_y == -1)) {
+                while (true) {
+                    int x = (int) (Math.random() * cols);
+                    int y = (int) (Math.random() * rows);
+                    // 检查新位置是否合法
+                    if (x == 0 || x == cols - 1 || y == 0 || y == rows - 1) {
+                        continue; // 边界
+                    }
+                    if ((y == rows - 2 && x == 1) || (y == 1 && x == cols - 2)) {
+                        continue; // 玩家出生点
+                    }
+                    if (g[y][x] == 1) {
+                        continue; // 墙壁
+                    }
+                    if (x == candy_x && y == candy_y) {
+                        continue; // 不能和之前的位置一样
+                    }
+                    candy_x = x;
+                    candy_y = y;
+                    eaten = 5;
+//                    System.out.println("updateupdateupdate");
+                    break;
+                }
+            }
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    public void sendCandy() {
+        lock.lock();
+        try {
+            if (eaten != -1) {
+                JSONObject resp = new JSONObject();
+                JSONObject candy = new JSONObject();
+                resp.put("event", "candy");
+                candy.put("candy_x", candy_x);
+                candy.put("candy_y", candy_y);
+                System.out.println(candy_x);
+                resp.put("candy", candy);
+                sendMessage(resp.toJSONString());
+                eaten = -1;
             }
         } finally {
             lock.unlock();
@@ -361,13 +441,33 @@ public class Game extends Thread {
         }
     }
 
+    private void sendTime() {
+        lock.lock();
+        try {
+            JSONObject resp = new JSONObject();
+            JSONObject time = new JSONObject();
+            resp.put("event", "time_update");
+            time.put("total", totalTime);
+            time.put("used", timeUsed);
+            resp.put("time", time);
+            sendMessage(resp.toJSONString());
+        } finally {
+            lock.unlock();
+        }
+    }
+
     @Override
     public void run() {
-        for (int i = 0; i < 100000; i++) {
+        for (int i = 0; i < totalTime; i++) {
+            checkEat();
+            updateCandy();
+            sendCandy();
             updateBullets();
             updateMove();
             sendMove();
-            if (!checkValid()) {
+            timeUsed = i + 1;
+            sendTime();
+            if (!checkValid(false)) {
                 System.out.println("游戏结束--------");
                 sendResult();
                 break;
@@ -377,6 +477,11 @@ public class Game extends Thread {
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
+        }
+        if(!checkValid(true)) {
+            // 游戏结束
+            System.out.println("计时结束");
+            sendResult();
         }
         super.run();
     }
