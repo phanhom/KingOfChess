@@ -124,7 +124,7 @@ public class WebSocketServer {
     @OnMessage
     public void onMessage(String message, Session session) {
         // 从Client接收消息
-        System.out.println("websocket receive message: " + message);
+//        System.out.println("websocket receive message: " + message);
 
         JSONObject data = JSONObject.parseObject(message);
         String event = data.getString("event");

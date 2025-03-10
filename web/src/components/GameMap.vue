@@ -12,8 +12,10 @@
                 </div>
             </div>
             <div class="card-body">
-                <h5 class="card-title">蓝方</h5>
-                <p class="card-text">分数: {{ plane0_score }}</p>
+                <h5 class="card-title" v-if="store.state.user.id == store.state.pk.p1_id">蓝方</h5>
+                <h5 class="card-title" v-else>红方</h5>
+                <p class="card-text" v-if="store.state.user.id == store.state.pk.p1_id">分数: {{ store.state.pk.p1_score }}</p>
+                <p class="card-text" v-else>分数: {{ store.state.pk.p2_score }}</p>
             </div>
         </div>
         <canvas ref="canvas" tabindex="0"></canvas>
@@ -29,8 +31,10 @@
                 </div>
             </div>
             <div class="card-body">
-                <h5 class="card-title">红方</h5>
-                <p class="card-text">分数: {{ plane1_score }}</p>
+                <h5 class="card-title" v-if="store.state.user.id == store.state.pk.p1_id">红方</h5>
+                <h5 class="card-title" v-else>蓝方</h5>
+                <p class="card-text" v-if="store.state.user.id == store.state.pk.p1_id">分数: {{ store.state.pk.p2_score }}</p>
+                <p class="card-text" v-else>分数: {{ store.state.pk.p1_score }}</p>
             </div>
         </div>
         <!-- 游戏结束弹出框 -->

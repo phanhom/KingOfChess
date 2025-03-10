@@ -53,7 +53,9 @@ onMounted(() => {
     } else if (data.event == 'candy') {
       store.commit('updateCandy', data.candy)
     } else if (data.event == 'time_update') {
-      store.commit('updateTime', data.time) // ?
+      store.commit('updateTime', data.time)
+    } else if(data.event == 'update_score') {
+      store.commit('updateScore', data.score)
     }
   }
 });

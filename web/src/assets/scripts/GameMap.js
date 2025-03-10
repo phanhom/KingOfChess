@@ -105,19 +105,19 @@ export class GameMap extends GameObject {
                     }
                 }
                 // 另一架飞机的子弹撞到我了, 所以如果是自己就跳过
-                if (plane.id == plane_id) continue;
-                if ((Math.abs(bullet.x - pos_x) < this.bullet_collision_eps) && (Math.abs(bullet.y - pos_y) < this.bullet_collision_eps)) {
-                    bullet.status = "dead";
-                    console.log("check_valid() => bullet hit plane");
-                    // return false;
-                    // 把这个移动到plane类里面来只更新子弹的位置
-                }
+                // if (plane.id == plane_id) continue;
+                // if ((Math.abs(bullet.x - pos_x) < this.bullet_collision_eps) && (Math.abs(bullet.y - pos_y) < this.bullet_collision_eps)) {
+                //     bullet.status = "dead";
+                //     console.log("check_valid() => bullet hit plane");
+                //     // return false;
+                //     // 把这个移动到plane类里面来只更新子弹的位置
+                // }
             }
         }
         // console.log(this.store.state.pk.status);
         if (this.store.state.pk.result === "deuce") return false;
         if (this.store.state.pk.result === "p1" && this.id === 1) return false;
-        if (this.store.state.pk.result === "p2" && this.id === 0) return false;
+        if (this.store.state.pk.result === "p2" && this.id === 0) return false;// ? this.id ?
         // console.log("check_valid => end");
         return true;
     }
@@ -150,8 +150,6 @@ export class GameMap extends GameObject {
                 this.store.state.pk.socket.send(JSON.stringify({
                     event: "shoot",
                 }));
-                this.planes[0].shoot();
-                this.planes[1].shoot();
             }
             if (d >= 0) {
                 if (this.store.state.pk.p1_id != this.store.state.user.id) {
@@ -187,6 +185,7 @@ export class GameMap extends GameObject {
     }
 
     render() {
+        const L = this.L;
         const color_even = "#AAD751", color_odd = "#BBE862";
         for (let i = 0; i < this.rows; i++) {
             for (let j = 0; j < this.cols; j++) {
@@ -198,5 +197,24 @@ export class GameMap extends GameObject {
                 this.ctx.fillRect(j * this.L, i * this.L, this.L, this.L);
             }
         }
+        // if(this.store.state.pk.p1_id == this.store.state.user.id) {
+        //     for(let bullet of this.planes[0].bullets) {
+        //         if(bullet.status == "dead") continue;
+        //         this.ctx.fillRect(bullet.x * L - 2, bullet.y * L - 2, 4, 4)
+        //     }
+        //     for(let bullet of this.planes[1].bullets) {
+        //         if(bullet.status == "dead") continue;
+        //         this.ctx.fillRect(bullet.y * L - 2, bullet.x * L - 2, 4, 4)
+        //     }
+        // } else {
+        //     for(let bullet of this.planes[0].bullets) {
+        //         if(bullet.status == "dead") continue;
+        //         this.ctx.fillRect(bullet.y * L - 2, bullet.x * L - 2, 4, 4)
+        //     }
+        //     for(let bullet of this.planes[1].bullets) {
+        //         if(bullet.status == "dead") continue;
+        //         this.ctx.fillRect(bullet.x * L - 2, bullet.y * L - 2, 4, 4)
+        //     }
+        // }
     }
 }

@@ -12,9 +12,10 @@ import java.util.List;
 @NoArgsConstructor
 public class Plane {
     private Integer id;
+    private Integer pid;
     private Integer direction;
     private double x, y;
     private double speed;
-    private double score;
+    private Integer score;
     private String status; // "idle", "moving", "dead"
 }

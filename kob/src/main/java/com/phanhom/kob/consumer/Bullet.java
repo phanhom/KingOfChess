@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class Bullet {
     private Integer id;
+    private Integer pid;
     private double x, y;
     private double speed;
     private Integer direction;

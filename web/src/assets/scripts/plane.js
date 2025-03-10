@@ -8,7 +8,7 @@ export class plane extends GameObject {
         this.id = info.id;
         this.store = store;
         this.color = info.color;
-        this.score = 1;
+        this.score = 20;
         this.gamemap = gamemap;
         this.r = info.r;    // current pos r
         this.c = info.c;    // current pos c
@@ -41,12 +41,11 @@ export class plane extends GameObject {
     }
 
     shoot() {
-        if(this.store.state.pk.new_bullet_arrive) {
+        if(this.store.state.pk.new_bullet_arrive == true) {
             if(this.score <= 0) return;
-            this.score -= 0.1;
-            this.score = this.score.toFixed(1);
             let bullet = this.store.state.pk.new_bullet;
-            if(bullet.id == this.store.state.user.id) {
+            if(bullet.pid == this.id) {
+                this.score -= 1;
                 // console.log(bullet)
                 this.bullets.push(new Bullet(bullet.x, bullet.y, bullet.direction, bullet.speed, bullet.id));
                 this.store.state.pk.new_bullet_arrive = false;
@@ -101,7 +100,7 @@ export class plane extends GameObject {
     }
 
     update() {
-        this.shoot();
+        this.shoot();//?
         this.update_bullets_move();
         // if (this.status == "moving") {
         //     this.update_move();
@@ -114,6 +113,7 @@ export class plane extends GameObject {
     render() {
         const L = this.gamemap.L;
         const ctx = this.gamemap.ctx;
+        // 看不见对面的子弹，而且老是先消耗蓝的分数
         // 渲染飞机
         if(this.store.state.pk.p1_id == this.store.state.user.id) {
             ctx.save();
@@ -140,7 +140,6 @@ export class plane extends GameObject {
                 ctx.fillRect(bullet.y * L - 2, bullet.x * L - 2, 4, 4)
             }
         }
-
         // 渲染子弹
     }
 }

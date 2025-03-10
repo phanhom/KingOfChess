@@ -58,6 +58,7 @@ export default {
         },
         updateBullets(state, bullet) {
             state.new_bullet = bullet;
+            console.log(bullet.id)
             state.new_bullet_arrive = true;
         },
         updateResult(state, result) {

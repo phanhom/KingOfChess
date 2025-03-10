@@ -32,8 +32,8 @@ public class Game extends Thread {
         this.g = new int[rows][cols];
         this.createMap();
         // 类似于第四象限 x = col, y = rows
-        p1 = new Plane(idA, 0, 1 + 0.5, rows - 2 + 0.5, 4, 2, "idle");
-        p2 = new Plane(idB, 2, cols - 2 + 0.5, 1 + 0.5, 4, 2, "idle");
+        p1 = new Plane(idA,0, 0, 1 + 0.5, rows - 2 + 0.5, 4, 20, "idle");
+        p2 = new Plane(idB,1, 2, cols - 2 + 0.5, 1 + 0.5, 4, 20, "idle");
     }
 
     public Plane getP1() {
@@ -287,11 +287,11 @@ public class Game extends Thread {
         lock.lock();
         try {
             if((int) p1.getX() == candy_x && (int) p1.getY() == candy_y) {
-                p1.setScore(p1.getScore() + 1);
+                p1.setScore(p1.getScore() + 10);
                 eaten = 1;
                 System.out.println("eaten");
             } else if ((int) p2.getX() == candy_x && (int) p2.getY() == candy_y) {
-                p2.setScore(p2.getScore() + 1);
+                p2.setScore(p2.getScore() + 10);
                 eaten = 2;
             }
         } finally {
@@ -366,19 +366,19 @@ public class Game extends Thread {
             Bullet bullet = null;
             if(userId.equals(p1.getId())) {
                 if(p1.getScore() <= 0) return;
-                p1.setScore(p1.getScore() - 0.1);
-                bullet = new Bullet(p1.getId(), p1.getX(), p1.getY(), 2 * p1.getSpeed(), p1.getDirection(), "alive");
+                p1.setScore(p1.getScore() - 1);
+                bullet = new Bullet(p1.getId(), p1.getPid(), p1.getX(), p1.getY(), 2 * p1.getSpeed(), p1.getDirection(), "alive");
             } else {
                 if(p2.getScore() <= 0) return;
-                p2.setScore(p2.getScore() - 0.1);
-                bullet = new Bullet(p2.getId(), p2.getX(), p2.getY(), 2 * p2.getSpeed(), p2.getDirection(), "alive");
+                p2.setScore(p2.getScore() - 1);
+                bullet = new Bullet(p2.getId(), p2.getPid(), p2.getX(), p2.getY(), 2 * p2.getSpeed(), p2.getDirection(), "alive");
             }
-//            System.out.println(bullet);
             bullets.add(bullet);
             JSONObject resp = new JSONObject();
             resp.put("event", "shoot");
             JSONObject blt = new JSONObject();
             blt.put("id", bullet.getId());
+            blt.put("pid", bullet.getPid());
             blt.put("x", bullet.getX());
             blt.put("y", bullet.getY());
             blt.put("speed", bullet.getSpeed());
@@ -441,6 +441,20 @@ public class Game extends Thread {
         }
     }
 
+    private void sendScore() {
+        lock.lock();
+        try {
+            JSONObject resp = new JSONObject();
+            JSONObject score = new JSONObject();
+            resp.put("event", "update_score");
+            score.put("p1_score", p1.getScore());
+            score.put("p2_score", p2.getScore());
+            resp.put("score", score);
+        } finally {
+            lock.unlock();
+        }
+    }
+
     private void sendTime() {
         lock.lock();
         try {
@@ -467,6 +481,7 @@ public class Game extends Thread {
             sendMove();
             timeUsed = i + 1;
             sendTime();
+//            sendScore();
             if (!checkValid(false)) {
                 System.out.println("游戏结束--------");
                 sendResult();
