@@ -24,7 +24,7 @@ export class GameMap extends GameObject {
 
         // 吃了就更新,不能在墙里面?
         // 吃了加1分，倒计时1min，谁分高谁赢，然后打子弹消耗0.1分?
- 
+
         //记得刷新分数和重置?
         //飞机撞了就重生并且减去1分?
 
@@ -115,9 +115,9 @@ export class GameMap extends GameObject {
             }
         }
         // console.log(this.store.state.pk.status);
-        if(this.store.state.pk.result === "deuce") return false;
-        if(this.store.state.pk.result === "p1" && this.id === 1) return false;
-        if(this.store.state.pk.result === "p2" && this.id === 0) return false;
+        if (this.store.state.pk.result === "deuce") return false;
+        if (this.store.state.pk.result === "p1" && this.id === 1) return false;
+        if (this.store.state.pk.result === "p2" && this.id === 0) return false;
         // console.log("check_valid => end");
         return true;
     }
@@ -152,15 +152,16 @@ export class GameMap extends GameObject {
                 }));
                 this.planes[0].shoot();
                 this.planes[1].shoot();
-                // console.log("shoot");
             }
             if (d >= 0) {
+                if (this.store.state.pk.p1_id != this.store.state.user.id) {
+                    d = 3 - d;
+                }
                 this.store.state.pk.socket.send(JSON.stringify({
                     event: "move",
                     direction: d,
                 }));
             }
-            // console.log(d);
         });
     }
 

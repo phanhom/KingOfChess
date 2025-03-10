@@ -78,7 +78,11 @@ export class candy extends GameObject {
     render() {
         const ctx = this.gamemap.ctx;
         const L = this.gamemap.L;
-        ctx.drawImage(this.candy_image, this.c * L, this.r * L, L, L);
+        if(this.store.state.pk.p1_id == this.store.state.user.id) {
+            ctx.drawImage(this.candy_image, this.c * L, this.r * L, L, L);
+        } else {
+            ctx.drawImage(this.candy_image, this.r * L, this.c * L, L, L);
+        }
     }
 
 }

@@ -25,6 +25,7 @@ export class plane extends GameObject {
         this.dr = [-1, 0, 1, 0, 0];
         this.dc = [0, 1, 0, -1, 0];
         this.angle = [-Math.PI / 2, 0, Math.PI / 2, Math.PI]
+        this.angle2 = [Math.PI, Math.PI / 2, 0, -Math.PI / 2]
 
         this.step = 0;  // 回合数
         this.bullets = [];
@@ -113,23 +114,33 @@ export class plane extends GameObject {
     render() {
         const L = this.gamemap.L;
         const ctx = this.gamemap.ctx;
-
         // 渲染飞机
-        ctx.save();
-        ctx.translate(this.x * L, this.y * L);
-        ctx.rotate(this.angle[this.direction]);
-        ctx.fillStyle = this.color;
-        ctx.drawImage(this.img, -0.5 * L, -0.5 * L, L, L);
-        ctx.restore();
-        // if(this.id == 0) {
-            // console.log(this.x, this.y);
-        // }
+        if(this.store.state.pk.p1_id == this.store.state.user.id) {
+            ctx.save();
+            ctx.translate(this.x * L, this.y * L);
+            ctx.rotate(this.angle[this.direction]);
+            ctx.fillStyle = this.color;
+            ctx.drawImage(this.img, -0.5 * L, -0.5 * L, L, L);
+            ctx.restore();
+            ctx.fillStyle = "black";
+            for(let bullet of this.bullets) {
+                if(bullet.status == "dead") continue;
+                ctx.fillRect(bullet.x * L - 2, bullet.y * L - 2, 4, 4)
+            }
+        } else {
+            ctx.save();
+            ctx.translate(this.y * L, this.x * L);
+            ctx.rotate(this.angle2[this.direction]);
+            ctx.fillStyle = this.color;
+            ctx.drawImage(this.img, -0.5 * L, -0.5 * L, L, L);
+            ctx.restore();
+            ctx.fillStyle = "black";
+            for(let bullet of this.bullets) {
+                if(bullet.status == "dead") continue;
+                ctx.fillRect(bullet.y * L - 2, bullet.x * L - 2, 4, 4)
+            }
+        }
 
         // 渲染子弹
-        ctx.fillStyle = "black";
-        for(let bullet of this.bullets) {
-            if(bullet.status == "dead") continue;
-            ctx.fillRect(bullet.x * L - 2, bullet.y * L - 2, 4, 4)
-        }
     }
 }
