@@ -13,6 +13,11 @@
     <version>0.0.1-SNAPSHOT</version>
     <name>backendcloud</name>
     <description>backendcloud</description>
+    <modules>
+        <module>matchingsystem</module>
+        <module>kob</module>
+    </modules>
+    <packaging>pom</packaging>
     <url/>
     <licenses>
         <license/>
