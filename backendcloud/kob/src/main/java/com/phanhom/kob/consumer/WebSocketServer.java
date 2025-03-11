@@ -73,15 +73,20 @@ public class WebSocketServer {
             whiteFlag();
             users.remove(this.user.getId());
 //            matchPool.remove(this.user);
+            MultiValueMap<String, String> data = new LinkedMultiValueMap<>();
+            data.add("user_id", this.user.getId().toString());
+            restTemplate.postForObject(removePlayer, data, String.class);
         }
     }
 
     private void whiteFlag() {
+        System.out.println(this.user.getId() + "white------");
         if(this.game == null) return;
+        System.out.println("already_white");
         game.whiteFlag(this.user.getId());
     }
 
-    private void startGame(Integer aId, Integer bId) {
+    public void startGame(Integer aId, Integer bId) {
         User a = userMapper.selectById(aId);
         User b = userMapper.selectById(bId);
 
@@ -111,7 +116,7 @@ public class WebSocketServer {
         MultiValueMap<String, String> data = new LinkedMultiValueMap<>();
         data.add("user_id", this.user.getId().toString());
         data.add("rating", this.user.getRating().toString());
-        restTemplate.postForObject("http://127.0.0.1:3003/player/add", data, String.class);
+        restTemplate.postForObject(addPlayer, data, String.class);
 //        matchPool.add(this.user);
 //        while(matchPool.size() >= 2) {
 //            Iterator<User> it = matchPool.iterator();
@@ -125,13 +130,12 @@ public class WebSocketServer {
 
     private void stopMatching() {
         System.out.println("stop matching");
-//        matchPool.remove(this.user);
+        MultiValueMap<String, String> data = new LinkedMultiValueMap<>();
+        data.add("user_id", this.user.getId().toString());
+        restTemplate.postForObject(removePlayer, data, String.class);
     }
 
     private void move(Integer direction) {
-//        System.out.println(game.getP1().getId());
-//        System.out.println(game.getP2().getId());
-//        System.out.println(this.user.getId());
         if(game.getP1().getId().equals(this.user.getId())) {
             game.setNextStepA(direction);
         } else if (game.getP2().getId().equals(this.user.getId())) {

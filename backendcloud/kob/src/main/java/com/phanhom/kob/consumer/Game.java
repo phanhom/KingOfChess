@@ -355,6 +355,8 @@ public class Game extends Thread {
         try {
             if (id.equals(p1.getId())) status = "p2";
             if (id.equals(p2.getId())) status = "p1";
+            System.out.println("whiteFlag!!!!!! from "  + id);
+            System.out.println(status);
         } finally {
             lock.unlock();
         }
@@ -465,6 +467,7 @@ public class Game extends Thread {
             time.put("used", timeUsed);
             resp.put("time", time);
             sendMessage(resp.toJSONString());
+//            System.out.println(p1.getId() + "----" + timeUsed);
         } finally {
             lock.unlock();
         }
@@ -481,9 +484,10 @@ public class Game extends Thread {
             sendMove();
             timeUsed = i + 1;
             sendTime();
-//            sendScore();
+//            sendScore(); // sendMove already have score
+//            System.out.println(status);
             if (!checkValid(false)) {
-//                System.out.println("游戏结束--------");
+                System.out.println("游戏结束--------");
                 sendResult();
                 break;
             }
