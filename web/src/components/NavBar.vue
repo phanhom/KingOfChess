@@ -43,7 +43,7 @@
               {{ user.username }}
             </a>
             <ul class="dropdown-menu">
-              <li><router-link class="dropdown-item" to="/user/bot">我的 Bot</router-link></li>
+              <li><router-link class="dropdown-item" to="/user/bot">个人中心</router-link></li>
               <li>
                 <hr class="dropdown-divider">
               </li>

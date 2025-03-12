@@ -9,6 +9,7 @@ import jakarta.websocket.*;
 import jakarta.websocket.server.PathParam;
 import jakarta.websocket.server.ServerEndpoint;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.config.ScheduledTask;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -18,6 +19,8 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArraySet;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 
 //就是websocket最大值，别让服务器过度承载?
 
@@ -29,6 +32,7 @@ public class WebSocketServer {
     final public static ConcurrentHashMap<Integer, WebSocketServer> users = new ConcurrentHashMap<>();
 
 //    final private static CopyOnWriteArraySet<User> matchPool = new CopyOnWriteArraySet<>();
+    private ScheduledExecutorService scheduler;
     private User user;
     private Session session = null;
     private Game game = null;
@@ -57,17 +61,30 @@ public class WebSocketServer {
 
         if(user != null) {
             users.put(userId, this);
-            JSONObject resp = new JSONObject();
-            resp.put("event", "update_online_count");
-            resp.put("online_count", users.size());
-            users.get(userId).sendMessage(resp.toJSONString());
+            startScheduledTask(userId);
         } else {
             this.session.close();
         }
     }
 
+    private void startScheduledTask(Integer userId) {
+        scheduler = Executors.newSingleThreadScheduledExecutor();
+        scheduler.scheduleAtFixedRate(() -> {
+            JSONObject resp = new JSONObject();
+            JSONObject data = new JSONObject();
+            resp.put("event", "heartbeat");
+            data.put("online_count", users.size());
+            data.put("timestamp", System.currentTimeMillis());
+            resp.put("data", data);
+            users.get(userId).sendMessage(resp.toJSONString());
+        }, 0, 5000, java.util.concurrent.TimeUnit.MILLISECONDS);
+    }
+
     @OnClose
     public void onClose() {
+        if (scheduler != null && !scheduler.isShutdown()) {
+            scheduler.shutdown();
+        }
         // 关闭链接
         if(this.user != null) {
             // 判定输了
@@ -179,6 +196,9 @@ public class WebSocketServer {
 
     @OnError
     public void onError(Session session, Throwable error) {
+        if (scheduler != null && !scheduler.isShutdown()) {
+            scheduler.shutdown();
+        }
         error.printStackTrace();
     }
 

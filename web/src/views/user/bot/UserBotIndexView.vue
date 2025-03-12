@@ -5,7 +5,13 @@
                 <div class="card">
                     <img :src="store.state.user.photo" class="card-img-top" alt="..." style="width: 100%;">
                     <div class="card-body">
-                        <h5 class="card-title">{{ store.state.user.username }}</h5>
+                        <h5 class="card-title"
+                            style="font-size: 1.5rem; font-weight: 600; color: #333; margin-bottom: 5px;">
+                            {{ store.state.user.username }}
+                        </h5>
+                        <p style="font-size: 1rem; color: #666; margin-bottom: 10px;">
+                            Rating: {{ store.state.user.rating }}
+                        </p>
                         <p class="card-text">Some quick example text to build on the card title and make up the bulk of
                             the card's content.</p>
                     </div>
@@ -47,7 +53,7 @@
                                             <!-- <textarea v-model="addbot.content" class="form-control" id="addbot-content"
                                                 rows="8" placeholder="请输入Bot代码"></textarea> -->
                                             <VAceEditor v-model:value="addbot.content" lang="c_cpp" theme="textmate"
-                                                style="height: 300px" :options="{ fontSize: '16px' }"/>
+                                                style="height: 300px" :options="{ fontSize: '16px' }" />
                                         </div>
                                     </div>
                                     <div class="modal-footer">
@@ -111,7 +117,8 @@
                                                         <div class="mb-3">
                                                             <label for="updatebot-content" class="form-label">代码</label>
                                                             <VAceEditor v-model:value="bot.content" lang="c_cpp"
-                                                                theme="textmate" style="height: 300px" :options="{ fontSize: '16px' }"/>
+                                                                theme="textmate" style="height: 300px"
+                                                                :options="{ fontSize: '16px' }" />
                                                         </div>
                                                     </div>
                                                     <div class="modal-footer">
@@ -214,12 +221,14 @@ const updatebot_func = async (bot) => {
 }
 
 const removebot_func = async (bot) => {
-    if (confirmNum.value < 1) {
-        confirmNum.value++;
-        alert('再次点击删除按钮以便删除Bot');
-        return;
-    }
-    confirmNum.value = 0;
+    // if (confirmNum.value < 1) {
+    //     confirmNum.value++;
+    //     alert('再次点击删除按钮以便删除Bot');
+    //     return;
+    // }
+    const isConfirmed = window.confirm(`确定要删除 ${bot.botName} 吗？`);
+    if (!isConfirmed) return;
+    // confirmNum.value = 0;
     const res = await axios.post('http://localhost:3000/user/bot/remove', {
         bot_id: bot.id,
     }, {

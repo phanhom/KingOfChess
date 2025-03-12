@@ -59,7 +59,7 @@ export default {
         },
         updateBullets(state, bullet) {
             state.new_bullet = bullet;
-            console.log(bullet.id)
+            // console.log(bullet.id)
             state.new_bullet_arrive = true;
         },
         updateResult(state, result) {
@@ -74,8 +74,8 @@ export default {
             state.total_time = time.total,
             state.time_used = time.used;
         },
-        updateOnlineCount(state, onlineCount) {
-            state.online_count = onlineCount;
+        updateOnlineCount(state, data) {
+            state.online_count = data.online_count;
         },
     },
     actions: {

@@ -60,9 +60,8 @@ onMounted(() => {
       store.commit('updateTime', data.time)
     } else if (data.event == 'update_score') {
       store.commit('updateScore', data.score)
-    } else if (data.event == 'update_online_count') {
-      console.log(data.online_count)
-      store.commit('updateOnlineCount', data.online_count)
+    } else if (data.event == 'heartbeat') {
+      store.commit('updateOnlineCount', data.data)
     }
   }
 });

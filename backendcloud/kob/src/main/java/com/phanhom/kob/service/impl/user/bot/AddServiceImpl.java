@@ -34,7 +34,7 @@ public class AddServiceImpl implements AddService {
         QueryWrapper<Bot> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("user_id", user.getId());
         List<Bot> bots = botMapper.selectList(queryWrapper);
-        if (bots.size() > 5) {
+        if (bots.size() >= 5) {
             map.put("error_message", "每个用户最多只能创建5个Bot");
             return map;
         }
