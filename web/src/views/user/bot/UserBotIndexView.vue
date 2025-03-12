@@ -14,6 +14,47 @@
                         </p>
                         <p class="card-text">Some quick example text to build on the card title and make up the bulk of
                             the card's content.</p>
+
+                        <button type="button" class="btn btn-outline-dark" data-bs-toggle="modal"
+                            data-bs-target="#changeProfileModal">
+                            修改个人信息
+                        </button>
+
+
+
+                        <!-- Change Profile Modal -->
+                        <div class="modal fade" id="changeProfileModal" tabindex="-1"
+                            aria-labelledby="changeProfileModalLabel" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="changeProfileModalLabel">更改个人资料</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                            aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="mb-3">
+                                            <label for="username" class="form-label">新用户名</label>
+                                            <input v-model="modify_info.username" type="text" class="form-control"
+                                                id="username" placeholder="请输入新用户名">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="photo" class="form-label">新头像网址</label>
+                                            <input v-model="modify_info.photo" type="text" class="form-control"
+                                                id="photo" placeholder="请输入头像图片网址">
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <div class="error-message" style="color: red;">{{ modify_info.error_message }}
+                                        </div>
+                                        <button type="button" class="btn btn-primary"
+                                            @click="update_user_info">提交</button>
+                                        <button type="button" class="btn btn-secondary"
+                                            data-bs-dismiss="modal">关闭</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -167,6 +208,31 @@ const addbot = reactive({
     content: '',
     error_message: '',
 });
+const modify_info = reactive({
+    username: store.state.user.username,
+    photo: store.state.user.photo,
+    error_message: '',
+});
+
+const update_user_info = async () => {
+    modify_info.error_message = '';
+    const res = await axios.post('http://localhost:3000/user/account/modifyinfo', {
+        username: modify_info.username,
+        photo: modify_info.photo,
+    }, {
+        headers: {
+            Authorization: `Bearer ${store.state.user.token}`,
+        },
+    });
+    modify_info.error_message = res.data.error_message;
+    console.log(res.data);
+    if (res.data.error_message == "success") {
+        Modal.getInstance('#changeProfileModal').hide();
+        document.querySelectorAll('.modal-backdrop').forEach(el => el.remove());
+        alert("修改成功");
+        location.reload();
+    }
+}
 
 const clear_error_message = () => {
     addbot.error_message = '';

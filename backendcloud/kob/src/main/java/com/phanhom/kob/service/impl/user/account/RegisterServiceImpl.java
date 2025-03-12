@@ -33,6 +33,7 @@ public class RegisterServiceImpl  implements RegisterService {
             map.put("error_message", "用户名或密码不能为空");
             return map;
         }
+
         if (username.length() > 100) {
             map.put("error_message", "用户名长度不能大于100");
             return map;
@@ -46,8 +47,23 @@ public class RegisterServiceImpl  implements RegisterService {
             return map;
         }
 
+        if (!username.matches("^[a-zA-Z0-9]+$")) {
+            map.put("error_message", "用户名只能包含字母和数字");
+            return map;
+        }
+
+        if (password.length() < 6) {
+            map.put("error_message", "密码长度不能小于6");
+            return map;
+        }
+
         if (password.length() > 100 || confirmedPassword.length() > 100) {
             map.put("error_message", "密码长度不能大于100");
+            return map;
+        }
+
+        if (!password.matches("^[a-zA-Z0-9]+$")) {
+            map.put("error_message", "密码只能包含字母和数字");
             return map;
         }
 
