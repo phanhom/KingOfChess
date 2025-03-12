@@ -3,6 +3,10 @@
   </PlayGround>
   <MatchGround v-if="store.state.pk.status != 'playing'">
   </MatchGround>
+  <div class="online-count">
+    <span class="dot"></span>
+    在线人数：{{ store.state.pk.online_count }}
+  </div>
 </template>
 
 <script setup>
@@ -54,8 +58,11 @@ onMounted(() => {
       store.commit('updateCandy', data.candy)
     } else if (data.event == 'time_update') {
       store.commit('updateTime', data.time)
-    } else if(data.event == 'update_score') {
+    } else if (data.event == 'update_score') {
       store.commit('updateScore', data.score)
+    } else if (data.event == 'update_online_count') {
+      console.log(data.online_count)
+      store.commit('updateOnlineCount', data.online_count)
     }
   }
 });
@@ -68,4 +75,28 @@ onUnmounted(() => {
 });
 </script>
 
-<style scoped></style>
+<style scoped>
+.online-count {
+  position: fixed;
+  bottom: 10px;
+  right: 10px;
+  background-color: rgba(0,0,0,0.2);
+  color: #fff;
+  padding: 8px 15px;
+  border-radius: 20px;
+  box-shadow: 0 0px 5px rgba(0, 0, 0, 0.5);
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  z-index: 10;
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  background-color: #00ff00;
+  border-radius: 50%;
+  box-shadow: 0 0 8px #00ff00;
+}
+</style>

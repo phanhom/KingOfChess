@@ -26,6 +26,7 @@ export default {
         new_candy_arrive: false,
         total_time: null,
         time_used: null,
+        online_count: null,
     },
     mutations: {
         updateSocket(state, socket) {
@@ -72,6 +73,9 @@ export default {
         updateTime(state, time) {
             state.total_time = time.total,
             state.time_used = time.used;
+        },
+        updateOnlineCount(state, onlineCount) {
+            state.online_count = onlineCount;
         },
     },
     actions: {

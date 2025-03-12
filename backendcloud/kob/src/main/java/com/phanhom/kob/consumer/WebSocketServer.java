@@ -57,6 +57,10 @@ public class WebSocketServer {
 
         if(user != null) {
             users.put(userId, this);
+            JSONObject resp = new JSONObject();
+            resp.put("event", "update_online_count");
+            resp.put("online_count", users.size());
+            users.get(userId).sendMessage(resp.toJSONString());
         } else {
             this.session.close();
         }

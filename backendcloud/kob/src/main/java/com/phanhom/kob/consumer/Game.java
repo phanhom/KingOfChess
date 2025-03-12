@@ -456,9 +456,9 @@ public class Game extends Thread {
             }
         }
         if(!checkValid(true)) {
-            if(status.equals("p1")) {
-                settlement(p1.getId(), p2.getId());
-            }
+//            if(status.equals("p1")) {
+//                settlement(p1.getId(), p2.getId());
+//            }
             sendResult();
         }
         super.run();
