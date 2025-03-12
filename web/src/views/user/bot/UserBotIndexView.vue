@@ -12,8 +12,7 @@
                         <p style="font-size: 1rem; color: #666; margin-bottom: 10px;">
                             Rating: {{ store.state.user.rating }}
                         </p>
-                        <p class="card-text">Some quick example text to build on the card title and make up the bulk of
-                            the card's content.</p>
+                        <p class="card-text">{{ store.state.user.description }}</p>
 
                         <button type="button" class="btn btn-outline-dark" data-bs-toggle="modal"
                             data-bs-target="#changeProfileModal">
@@ -37,6 +36,11 @@
                                             <label for="username" class="form-label">新用户名</label>
                                             <input v-model="modify_info.username" type="text" class="form-control"
                                                 id="username" placeholder="请输入新用户名">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="description" class="form-label">新简介</label>
+                                            <input v-model="modify_info.description" type="text" class="form-control"
+                                                id="description" placeholder="请输入新简介">
                                         </div>
                                         <div class="mb-3">
                                             <label for="photo" class="form-label">新头像网址</label>
@@ -211,6 +215,7 @@ const addbot = reactive({
 const modify_info = reactive({
     username: store.state.user.username,
     photo: store.state.user.photo,
+    description: store.state.user.description,
     error_message: '',
 });
 
@@ -219,6 +224,7 @@ const update_user_info = async () => {
     const res = await axios.post('http://localhost:3000/user/account/modifyinfo', {
         username: modify_info.username,
         photo: modify_info.photo,
+        description: modify_info.description,
     }, {
         headers: {
             Authorization: `Bearer ${store.state.user.token}`,

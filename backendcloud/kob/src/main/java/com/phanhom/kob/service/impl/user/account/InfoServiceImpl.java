@@ -34,11 +34,12 @@ public class InfoServiceImpl implements InfoService {
         res.put("username", user.getUsername());
         res.put("photo", user.getPhoto());
         res.put("rating", user.getRating().toString());
+        res.put("description", user.getDescription());
         return res;
     }
 
     @Override
-    public Map<String, String> modifyInfo(String username, String photo) {
+    public Map<String, String> modifyInfo(String username, String photo, String description) {
         UsernamePasswordAuthenticationToken authenticationToken =
                 (UsernamePasswordAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
 
@@ -55,13 +56,17 @@ public class InfoServiceImpl implements InfoService {
             return res;
         }
 
+        if(description != null && description.length() > 80) {
+            res.put("error_message", "描述最多80个字符");
+            return res;
+        }
+
         user.setUsername(username);
         user.setPhoto(photo);
+        user.setDescription(description);
         userMapper.updateById(user);
 
         res.put("error_message", "success");
         return res;
     }
-
-
 }

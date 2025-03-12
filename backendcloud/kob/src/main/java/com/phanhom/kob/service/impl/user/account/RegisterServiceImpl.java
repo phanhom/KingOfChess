@@ -34,8 +34,8 @@ public class RegisterServiceImpl  implements RegisterService {
             return map;
         }
 
-        if (username.length() > 100) {
-            map.put("error_message", "用户名长度不能大于100");
+        if (username.length() > 20) {
+            map.put("error_message", "用户名长度不能大于20");
             return map;
         }
 
@@ -57,13 +57,13 @@ public class RegisterServiceImpl  implements RegisterService {
             return map;
         }
 
-        if (password.length() > 100 || confirmedPassword.length() > 100) {
-            map.put("error_message", "密码长度不能大于100");
+        if (password.length() > 20 || confirmedPassword.length() > 20) {
+            map.put("error_message", "密码长度不能大于20");
             return map;
         }
 
-        if (!password.matches("^[a-zA-Z0-9]+$")) {
-            map.put("error_message", "密码只能包含字母和数字");
+        if (!password.matches("^[a-zA-Z0-9.!*&@#]+$")) {
+            map.put("error_message", "密码只能包含字母和数字和.!*&@#");
             return map;
         }
 
@@ -74,7 +74,7 @@ public class RegisterServiceImpl  implements RegisterService {
 
         String encodedPassword = passwordEncoder.encode(password);
         String photo = "https://userpic.codeforces.org/no-title.jpg";
-        User user = new User(null, username, encodedPassword, photo, 1500);
+        User user = new User(null, username, encodedPassword, photo, 1500, "");
         userMapper.insert(user);
 
         map.put("error_message", "success");

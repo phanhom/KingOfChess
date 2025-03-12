@@ -7,6 +7,7 @@ export default {
         photo: '',
         token: '',
         rating: '',
+        description: '',
         is_login: false,
     },
     mutations: {
@@ -15,7 +16,7 @@ export default {
             state.username = user.username;
             state.photo = user.photo;
             state.rating = user.rating;
-            // console.log(user.rating)
+            state.description = user.description;
             state.is_login = true;
         },
         updateToken(state, token) {
@@ -27,6 +28,8 @@ export default {
             state.username = '';
             state.photo = '';
             state.token = '';
+            state.rating = '';
+            state.description = '';
             state.is_login = false;
         }
     },

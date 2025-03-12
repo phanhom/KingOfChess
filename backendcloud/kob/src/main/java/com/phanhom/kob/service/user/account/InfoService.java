@@ -4,5 +4,5 @@ import java.util.Map;
 
 public interface InfoService {
     Map<String, String> getinfo();
-    Map<String, String> modifyInfo(String username, String photo);
+    Map<String, String> modifyInfo(String username, String photo, String description);
 }

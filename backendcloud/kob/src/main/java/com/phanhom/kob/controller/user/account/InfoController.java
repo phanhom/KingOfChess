@@ -24,7 +24,8 @@ public class InfoController {
     public Map<String, String> modifyInfo(@RequestBody Map<String, String> map) {
         String username = map.get("username");
         String photo = map.get("photo");
-        System.out.println("username: " + username + " photo: " + photo);
-        return infoService.modifyInfo(username, photo);
+        String description = map.get("description");
+//        System.out.println("username: " + username + " photo: " + photo);
+        return infoService.modifyInfo(username, photo, description);
     }
 }
