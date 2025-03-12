@@ -22,9 +22,6 @@ public class RegisterServiceImpl  implements RegisterService {
 
     @Override
     public Map<String, String> register(String username, String password, String confirmedPassword) {
-//        System.out.println("username: " + username);
-//        System.out.println("password: " + password);
-//        System.out.println("confirmedPassword: " + confirmedPassword);
         Map<String, String> map = new HashMap<>();
         if (username == null || password == null || confirmedPassword == null) {
             map.put("error_message", "用户名或密码不能为空");

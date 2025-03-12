@@ -20,7 +20,6 @@ public class RegisterController {
         String username = map.get("username");
         String password = map.get("password");
         String confirmedPassword = map.get("confirmedPassword");
-//        System.out.println("testetstetest");
         return registerService.register(username, password, confirmedPassword);
     }
 }

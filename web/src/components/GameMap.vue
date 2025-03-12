@@ -12,8 +12,8 @@
                 </div>
             </div>
             <div class="card-body">
-                <h5 class="card-title" v-if="store.state.user.id == store.state.pk.p1_id">蓝方</h5>
-                <h5 class="card-title" v-else>红方</h5>
+                <h5 class="card-title" style="color: blue;" v-if="store.state.user.id == store.state.pk.p1_id">蓝方</h5>
+                <h5 class="card-title" style="color: red;" v-else>红方</h5>
                 <p class="card-text" v-if="store.state.user.id == store.state.pk.p1_id">分数: {{ store.state.pk.p1_score }}</p>
                 <p class="card-text" v-else>分数: {{ store.state.pk.p2_score }}</p>
             </div>
@@ -31,8 +31,8 @@
                 </div>
             </div>
             <div class="card-body">
-                <h5 class="card-title" v-if="store.state.user.id == store.state.pk.p1_id">红方</h5>
-                <h5 class="card-title" v-else>蓝方</h5>
+                <h5 class="card-title" style="color: red;" v-if="store.state.user.id == store.state.pk.p1_id">红方</h5>
+                <h5 class="card-title" style="color: blue;" v-else>蓝方</h5>
                 <p class="card-text" v-if="store.state.user.id == store.state.pk.p1_id">分数: {{ store.state.pk.p2_score }}</p>
                 <p class="card-text" v-else>分数: {{ store.state.pk.p1_score }}</p>
             </div>

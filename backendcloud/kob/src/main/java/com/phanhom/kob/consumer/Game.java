@@ -1,6 +1,10 @@
 package com.phanhom.kob.consumer;
 
 import com.alibaba.fastjson2.JSONObject;
+import com.phanhom.kob.mapper.UserMapper;
+import com.phanhom.kob.pojo.User;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -166,8 +170,6 @@ public class Game extends Thread {
         lock.lock();
         try {
             if(p1.getStatus() == "moving") {
-//                System.out.println("--------");
-//                System.out.println(p1.getX());
                 double moveDistance1 = p1.getSpeed() * timeDelta / 1000;
                 p1.setX(p1.getX() + dx[p1.getDirection()] * moveDistance1);
                 p1.setY(p1.getY() + dy[p1.getDirection()] * moveDistance1);
@@ -177,9 +179,6 @@ public class Game extends Thread {
                 p2.setX(p2.getX() + dx[p2.getDirection()] * moveDistance2);
                 p2.setY(p2.getY() + dy[p2.getDirection()] * moveDistance2);
             }
-//            System.out.println(p1.getX());
-//            System.out.println(p2.getX());
-//            System.out.println("test");
         } finally {
             lock.unlock();
         }
@@ -202,11 +201,6 @@ public class Game extends Thread {
             }
             // 检查飞机相撞
             if (Math.abs(p1.getX() - p2.getX()) < collision_eps && Math.abs(p1.getY() - p2.getY()) < collision_eps) {
-//                System.out.println(p1.getX());
-//                System.out.println(p1.getY());
-//                System.out.println(p2.getX());
-//                System.out.println(p2.getY());
-//                System.out.println("check_valid() => plane hit plane");
                 status = "deuce"; // 设置游戏状态为结束
                 return false;
             }
@@ -216,12 +210,10 @@ public class Game extends Thread {
                 for (int c = 0; c < cols; c++) {
                     if (g[r][c] == 1) { // 墙的位置
                         if (Math.abs(r + 0.5 - p1.getY()) < collision_eps && Math.abs(c + 0.5 - p1.getX()) < collision_eps) {
-//                            System.out.println("check_valid() => plane hit wall (p1)");
                             status = "p2";
                             return false;
                         }
                         if (Math.abs(r + 0.5 - p2.getY()) < collision_eps && Math.abs(c + 0.5 - p2.getX()) < collision_eps) {
-//                            System.out.println("check_valid() => plane hit wall (p2)");
                             status = "p1";
                             return false;
                         }
@@ -237,7 +229,6 @@ public class Game extends Thread {
                 for (int r = 0; r < rows; r++) {
                     for (int c = 0; c < cols; c++) {
                         if (g[r][c] == 1 && (int) bullet.getY() == r && (int) bullet.getX() == c) {
-//                            System.out.println("check_valid() => 子弹撞墙上了");
                             bullet.setStatus("dead");
                             break;
                         }
@@ -249,13 +240,11 @@ public class Game extends Thread {
                 // 检查子弹撞飞机
                 if (bullet.getId() != p1.getId() && Math.abs(bullet.getX() - p1.getX()) < bullet_collision_eps && Math.abs(bullet.getY() - p1.getY()) < bullet_collision_eps) {
                     bullet.setStatus("dead");
-//                    System.out.println("check_valid() => bullet hit plane (p2)");
                     status = "p2";
                     return false;
                 }
                 if (bullet.getId() != p2.getId() && Math.abs(bullet.getX() - p2.getX()) < bullet_collision_eps && Math.abs(bullet.getY() - p2.getY()) < bullet_collision_eps) {
                     bullet.setStatus("dead");
-//                    System.out.println("check_valid() => bullet hit plane (p2)");
                     status = "p1";
                     return false;
                 }
@@ -275,8 +264,6 @@ public class Game extends Thread {
                 double moveDistance = bullet.getSpeed() * timeDelta / 1000.0;
                 bullet.setX(bullet.getX() + dx[bullet.getDirection()] * moveDistance);
                 bullet.setY(bullet.getY() + dy[bullet.getDirection()] * moveDistance);
-//                System.out.println(bullet.getX());
-//                System.out.println(bullet.getY());
             }
         } finally {
             lock.unlock();
@@ -289,7 +276,6 @@ public class Game extends Thread {
             if((int) p1.getX() == candy_x && (int) p1.getY() == candy_y) {
                 p1.setScore(p1.getScore() + 10);
                 eaten = 1;
-                System.out.println("eaten");
             } else if ((int) p2.getX() == candy_x && (int) p2.getY() == candy_y) {
                 p2.setScore(p2.getScore() + 10);
                 eaten = 2;
@@ -322,7 +308,6 @@ public class Game extends Thread {
                     candy_x = x;
                     candy_y = y;
                     eaten = 5;
-//                    System.out.println("updateupdateupdate");
                     break;
                 }
             }
@@ -340,7 +325,6 @@ public class Game extends Thread {
                 resp.put("event", "candy");
                 candy.put("candy_x", candy_x);
                 candy.put("candy_y", candy_y);
-                System.out.println(candy_x);
                 resp.put("candy", candy);
                 sendMessage(resp.toJSONString());
                 eaten = -1;
@@ -355,8 +339,6 @@ public class Game extends Thread {
         try {
             if (id.equals(p1.getId())) status = "p2";
             if (id.equals(p2.getId())) status = "p1";
-            System.out.println("whiteFlag!!!!!! from "  + id);
-            System.out.println(status);
         } finally {
             lock.unlock();
         }
@@ -413,15 +395,12 @@ public class Game extends Thread {
             gamedata.put("p1_direction", p1.getDirection());
             gamedata.put("p1_x", p1.getX());
             gamedata.put("p1_y", p1.getY());
-//            System.out.println("p1x    " + p1.getX());
-//            System.out.println("p1y    " + p1.getY());
             gamedata.put("p2_id", p2.getId());
             gamedata.put("p2_direction", p2.getDirection());
             gamedata.put("p2_score", p2.getScore());
             gamedata.put("p2_x", p2.getX());
             gamedata.put("p2_y", p2.getY());
             resp.put("gamedata", gamedata);
-//            System.out.println(resp.toJSONString());
             sendMessage(resp.toJSONString());
         } finally {
             lock.unlock();
@@ -432,26 +411,9 @@ public class Game extends Thread {
         lock.lock();
         try {
             JSONObject resp = new JSONObject();
-//            JSONObject result = new JSONObject();
             resp.put("event", "game_over");
-//            result.put("result", status);
             resp.put("result", status);
-//            System.out.println(resp.toJSONString());
             sendMessage(resp.toJSONString());
-        } finally {
-            lock.unlock();
-        }
-    }
-
-    private void sendScore() {
-        lock.lock();
-        try {
-            JSONObject resp = new JSONObject();
-            JSONObject score = new JSONObject();
-            resp.put("event", "update_score");
-            score.put("p1_score", p1.getScore());
-            score.put("p2_score", p2.getScore());
-            resp.put("score", score);
         } finally {
             lock.unlock();
         }
@@ -467,7 +429,6 @@ public class Game extends Thread {
             time.put("used", timeUsed);
             resp.put("time", time);
             sendMessage(resp.toJSONString());
-//            System.out.println(p1.getId() + "----" + timeUsed);
         } finally {
             lock.unlock();
         }
@@ -484,10 +445,7 @@ public class Game extends Thread {
             sendMove();
             timeUsed = i + 1;
             sendTime();
-//            sendScore(); // sendMove already have score
-//            System.out.println(status);
             if (!checkValid(false)) {
-                System.out.println("游戏结束--------");
                 sendResult();
                 break;
             }
@@ -498,8 +456,9 @@ public class Game extends Thread {
             }
         }
         if(!checkValid(true)) {
-            // 游戏结束
-//            System.out.println("计时结束");
+            if(status.equals("p1")) {
+                settlement(p1.getId(), p2.getId());
+            }
             sendResult();
         }
         super.run();

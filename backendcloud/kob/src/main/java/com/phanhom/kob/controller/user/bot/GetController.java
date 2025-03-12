@@ -17,7 +17,6 @@ public class GetController {
 
     @PostMapping("/user/bot/get")
     public List<Bot> get() {
-//        System.out.println("get");
         return getService.get();
     }
 

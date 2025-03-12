@@ -51,14 +51,12 @@ public class WebSocketServer {
     public void onOpen(Session session, @PathParam("token") String token) throws IOException {
         // 建立连接
         this.session = session;
-//        System.out.println("websocket online");
 
         Integer userId = JwtUtil.JWT2UserID(token);
         this.user = userMapper.selectById(userId);
 
         if(user != null) {
             users.put(userId, this);
-//            System.out.println(users);
         } else {
             this.session.close();
         }
@@ -67,12 +65,10 @@ public class WebSocketServer {
     @OnClose
     public void onClose() {
         // 关闭链接
-//        System.out.println("websocket offline");
         if(this.user != null) {
-            // 判定输了?
+            // 判定输了
             whiteFlag();
             users.remove(this.user.getId());
-//            matchPool.remove(this.user);
             MultiValueMap<String, String> data = new LinkedMultiValueMap<>();
             data.add("user_id", this.user.getId().toString());
             restTemplate.postForObject(removePlayer, data, String.class);
@@ -80,10 +76,33 @@ public class WebSocketServer {
     }
 
     private void whiteFlag() {
-        System.out.println(this.user.getId() + "white------");
         if(this.game == null) return;
-        System.out.println("already_white");
         game.whiteFlag(this.user.getId());
+    }
+
+    // ????
+    public void settlement(Integer winnerId, Integer loserId) {
+        User winner = userMapper.selectById(winnerId);
+        User loser = userMapper.selectById(loserId);
+        int winner_score = winner.getRating();
+        int loser_score = loser.getRating();
+        int diff = winner_score - loser_score;
+        int result = (int) Math.exp(-diff) * 9;
+        if(diff >= 0) {
+            result = Math.max(3, result);
+            winner.setRating(winner_score + result);
+            loser.setRating(loser_score - result);
+            userMapper.updateById(winner);
+            userMapper.updateById(loser);
+        } else {
+            diff *= -1;
+            result = result * -1 + 18;
+            result = Math.max(15, result);
+            winner.setRating(winner_score + result);
+            loser.setRating(loser_score - result);
+            userMapper.updateById(winner);
+            userMapper.updateById(loser);
+        }
     }
 
     public void startGame(Integer aId, Integer bId) {
@@ -117,15 +136,6 @@ public class WebSocketServer {
         data.add("user_id", this.user.getId().toString());
         data.add("rating", this.user.getRating().toString());
         restTemplate.postForObject(addPlayer, data, String.class);
-//        matchPool.add(this.user);
-//        while(matchPool.size() >= 2) {
-//            Iterator<User> it = matchPool.iterator();
-//            User a = it.next(), b = it.next();
-//            matchPool.remove(a);
-//            matchPool.remove(b);
-//
-//            startGame(a.getId(), b.getId());
-//        }
     }
 
     private void stopMatching() {
@@ -150,8 +160,6 @@ public class WebSocketServer {
     @OnMessage
     public void onMessage(String message, Session session) {
         // 从Client接收消息
-//        System.out.println("websocket receive message: " + message);
-
         JSONObject data = JSONObject.parseObject(message);
         String event = data.getString("event");
         if("start-matching".equals(event)) {
