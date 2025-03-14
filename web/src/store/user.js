@@ -36,7 +36,7 @@ export default {
     actions: {
         async login(context, data) {
             try {
-                const response = await axios.post('http://localhost:3000/user/account/token', {
+                const response = await axios.post('http://127.0.0.1:3000/user/account/token', {
                     username: data.username,
                     password: data.password,
                 });
@@ -58,7 +58,7 @@ export default {
         },
         async getinfo(context, data) {
             try {
-                const response = await axios.get('http://localhost:3000/user/account/info', {
+                const response = await axios.get('http://127.0.0.1:3000/user/account/info', {
                     headers: {
                         Authorization: `Bearer ${context.state.token}`,
                     },

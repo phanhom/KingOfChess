@@ -16,7 +16,7 @@ import { onMounted, onUnmounted, ref } from 'vue';
 import { useStore } from 'vuex';
 
 const store = useStore();
-const socketUrl = `ws://localhost:3000/websocket/${store.state.user.token}`;
+const socketUrl = `ws://127.0.0.1:3000/websocket/${store.state.user.token}`;
 
 let socket = null;
 
@@ -34,6 +34,7 @@ onMounted(() => {
       store.commit('updateOpponentInfo', {
         username: data.opponent_username,
         photo: data.opponent_photo,
+        rating: data.opponent_rating,
       });
       store.commit('updateGameMap', data.game_map);
       store.commit('updateStatus', data.event);
@@ -60,6 +61,8 @@ onMounted(() => {
       store.commit('updateTime', data.time)
     } else if (data.event == 'update_score') {
       store.commit('updateScore', data.score)
+    } else if (data.event == 'chat_message') {
+      store.commit('updateChatMessage', data.chat) // ????
     } else if (data.event == 'heartbeat') {
       store.commit('updateOnlineCount', data.data)
     }

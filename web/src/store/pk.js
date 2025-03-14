@@ -7,6 +7,7 @@ export default {
         socket: null,
         opponent_username: '',
         opponent_photo: '',
+        opponent_rating: '',
         game_map: null,
         game_obj: null,
         p1_id: null,
@@ -27,6 +28,8 @@ export default {
         total_time: null,
         time_used: null,
         online_count: null,
+        chat_messages: [],
+        new_message: '',
     },
     mutations: {
         updateSocket(state, socket) {
@@ -38,6 +41,7 @@ export default {
         updateOpponentInfo(state, opinfo) {
             state.opponent_username = opinfo.username;
             state.opponent_photo = opinfo.photo;
+            state.opponent_rating = opinfo.rating;
         },
         updateGame(state, gamedata) {
             state.p1_id = gamedata.p1_id;
@@ -72,10 +76,28 @@ export default {
         },
         updateTime(state, time) {
             state.total_time = time.total,
-            state.time_used = time.used;
+                state.time_used = time.used;
         },
         updateOnlineCount(state, data) {
             state.online_count = data.online_count;
+        },
+        updateChatMessage(state, chat) {
+            console.log(chat)
+            state.new_message = chat;
+            // state.chat_messages.push({
+            //     user_id: chat.userid,
+            //     message: chat.message,
+            // });
+        },
+        send_message(state, msg) {
+            if (state.socket != null) {
+                state.socket.send(JSON.stringify({
+                    event: 'message',
+                    from_user_id: msg.from_id,
+                    to_user_id: msg.to_id,
+                    message: msg.msg,
+                }));
+            }
         },
     },
     actions: {

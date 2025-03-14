@@ -1,40 +1,70 @@
 <template>
     <div ref="parent" class="gamemap">
         <!-- 左侧 Plane0 信息 -->
-        <div class="card" style="width: 20%;">
-            <div class="row">
-                <div class="col-6">
-                    <img :src="store.state.user.photo" class="card-img-top" alt="...">
+        <div class="column" style="width: 20%;">
+            <div class="card" style="width: 100%;">
+                <div class="row">
+                    <div class="col-5">
+                        <img :src="store.state.user.photo" class="card-img-top" alt="...">
+                    </div>
+                    <div class="col-6">
+                        <p class="card-text">用户名：{{ store.state.user.username }}</p>
+                        <p>天梯：{{ store.state.pk.opponent_rating }}</p>
+                    </div>
                 </div>
-                <div class="col-6">
-                    <p class="card-text">姓名，最高bot胜率</p>
-                    <h5 style="color: red;">5连胜</h5>
+                <div class="card-body">
+                    <h5 class="card-title" style="color: blue;" v-if="store.state.user.id == store.state.pk.p1_id">蓝方
+                    </h5>
+                    <h5 class="card-title" style="color: red;" v-else>红方</h5>
+                    <p class="card-text" v-if="store.state.user.id == store.state.pk.p1_id">分数: {{
+                        store.state.pk.p1_score }}</p>
+                    <p class="card-text" v-else>当前分数: {{ store.state.pk.p2_score }}</p>
                 </div>
             </div>
-            <div class="card-body">
-                <h5 class="card-title" style="color: blue;" v-if="store.state.user.id == store.state.pk.p1_id">蓝方</h5>
-                <h5 class="card-title" style="color: red;" v-else>红方</h5>
-                <p class="card-text" v-if="store.state.user.id == store.state.pk.p1_id">分数: {{ store.state.pk.p1_score }}</p>
-                <p class="card-text" v-else>分数: {{ store.state.pk.p2_score }}</p>
-            </div>
+
+            <section class="section">
+                <div class="card chat-card" id="chat2">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">聊天室</h5>
+                    </div>
+                    <div class="card-body chat-body" ref="chatContainer">
+                        <div v-for="(msg, index) in chat_history" :key="index"
+                            :class="['chat-message', msg.userid === store.state.user.id ? 'self-message' : 'other-message']">
+                            <img :src="msg.userid === store.state.user.id ? store.state.user.photo : store.state.pk.opponent_photo"
+                                alt="avatar" class="avatar">
+                            <div class="message">
+                                <p class="small">{{ msg.message }}</p>
+                                <!-- <p class="timestamp">{{ new Date().toLocaleTimeString() }}</p> -->
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer d-flex align-items-center">
+                        <input v-model="chat_input" type="text" class="form-control chat-input" placeholder="输入消息..." @keydown.enter="send_message">
+                        <button type="button" class="btn btn-primary ms-2 send-btn" @click="send_message">
+                            <img src="@/assets/images/snake.ico" alt="发送" class="plane-icon">
+                        </button>
+                    </div>
+                </div>
+            </section>
         </div>
         <canvas ref="canvas" tabindex="0"></canvas>
         <!-- 右侧 Plane1 信息 -->
         <div class="card" style="width: 20%;">
             <div class="row">
-                <div class="col-6">
+                <div class="col-5">
                     <img :src="store.state.pk.opponent_photo" class="card-img-top" alt="...">
                 </div>
                 <div class="col-6">
-                    <p class="card-text">姓名，最高bot胜率</p>
-                    <h5 style="color: red;">5连胜</h5>
+                    <p class="card-text">用户名：{{ store.state.pk.opponent_username }}</p>
+                    <p>天梯：{{ store.state.pk.opponent_rating }}</p>
                 </div>
             </div>
             <div class="card-body">
                 <h5 class="card-title" style="color: red;" v-if="store.state.user.id == store.state.pk.p1_id">红方</h5>
                 <h5 class="card-title" style="color: blue;" v-else>蓝方</h5>
-                <p class="card-text" v-if="store.state.user.id == store.state.pk.p1_id">分数: {{ store.state.pk.p2_score }}</p>
-                <p class="card-text" v-else>分数: {{ store.state.pk.p1_score }}</p>
+                <p class="card-text" v-if="store.state.user.id == store.state.pk.p1_id">当前分数: {{ store.state.pk.p2_score
+                }}</p>
+                <p class="card-text" v-else>当前分数: {{ store.state.pk.p1_score }}</p>
             </div>
         </div>
         <!-- 游戏结束弹出框 -->
@@ -57,13 +87,11 @@
         </div>
     </div>
     <div class="progress">
-    <div class="progress-bar" role="progressbar"
-        :style="{ width: (store.state.pk.time_used / store.state.pk.total_time) * 100 + '%' }"
-        aria-valuenow="store.state.pk.time_used"
-        aria-valuemin="0"
-        :aria-valuemax="store.state.pk.total_time">
+        <div class="progress-bar" role="progressbar"
+            :style="{ width: (store.state.pk.time_used / store.state.pk.total_time) * 100 + '%' }"
+            aria-valuenow="store.state.pk.time_used" aria-valuemin="0" :aria-valuemax="store.state.pk.total_time">
+        </div>
     </div>
-</div>
 </template>
 
 <script setup>
@@ -84,7 +112,37 @@ const store = useStore();
 const winner = ref("");
 const plane0_score = ref(0);
 const plane1_score = ref(0);
+const chat_history = ref([]);
+const chat_input = ref("");
+const chatContainer = ref(null);
 
+
+const send_message = () => {
+    if (chat_input.value == "") return;
+    if (store.state.pk.p1_id == store.state.user.id) {
+        store.commit("send_message", {
+            from_id: store.state.pk.p1_id,
+            to_id: store.state.pk.p2_id,
+            msg: chat_input.value
+        });
+    } else {
+        store.commit("send_message", {
+            from_id: store.state.pk.p2_id,
+            to_id: store.state.pk.p1_id,
+            msg: chat_input.value
+        });
+    }
+    chat_history.value.push({
+        userid: store.state.user.id,
+        message: chat_input.value,
+    });
+    setTimeout(() => {
+        if (chatContainer.value) {
+            chatContainer.value.scrollTop = chatContainer.value.scrollHeight;
+        }
+    }, 300);
+    chat_input.value = "";
+}
 
 onMounted(() => {
     game_map.value = new GameMap(canvas.value.getContext('2d'), parent.value, store);
@@ -110,8 +168,28 @@ onMounted(() => {
                 showModal();
             }
         }
+        if (store.state.pk.new_message != '') {
+            if (store.state.pk.p1_id == store.state.user.id) {
+                chat_history.value.push({
+                    userid: store.state.pk.p2_id,
+                    message: store.state.pk.new_message
+                });
+            } else {
+                chat_history.value.push({
+                    userid: store.state.pk.p1_id,
+                    message: store.state.pk.new_message
+                });
+            }
+            store.state.pk.new_message = '';
+            setTimeout(() => {
+                if (chatContainer.value) {
+                    chatContainer.value.scrollTop = chatContainer.value.scrollHeight;
+                }
+            }, 200);
+        }
     }, 100);
 });
+
 
 // 显示模态框
 const showModal = () => {
@@ -128,6 +206,14 @@ const restartGame = () => {
 <style scoped>
 canvas:focus {
     outline: none;
+}
+
+.column {
+    width: 20%;
+    display: flex;
+    flex-direction: column;  /* 子元素垂直排列 */
+    height: 100%;  /* 确保有足够的高度 */
+    gap: 20px;  /* 可选，增加顶部和底部元素之间的间距 */
 }
 
 div.gamemap {
@@ -155,6 +241,7 @@ div.gamemap {
     border-radius: 50%;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 }
+
 .progress {
     width: 100%;
     height: 20px;
@@ -169,4 +256,110 @@ div.gamemap {
     transition: width 0.1s linear;
 }
 
+.section {
+    flex-grow: 1;  /* 让 section 填满剩余空间 */
+    display: flex;
+    flex-direction: column;
+}
+
+.chat-card {
+    width: 100%;
+    height: 40vh;
+    border-radius: 7px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    /* overflow: hidden; */
+}
+
+.chat-body {
+    max-height: 35vh;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    /* Firefox 滚动条样式 */
+    padding: 15px;
+    background-color: #f8f9fa;
+}
+
+.card-footer {
+    display: flex;
+    align-items: center;
+}
+
+
+.chat-message {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 10px;
+}
+
+.self-message {
+    flex-direction: row-reverse;
+    text-align: right;
+}
+
+.message {
+    max-width: 70%;
+    padding: 7px 10px;
+    background-color: #e3f2fd;
+    border-radius: 10px;
+    margin-right: 7px;
+    margin-left: 7px;
+    margin-top: 5px;
+
+    display: flex;
+    align-items: center;  /* 垂直居中 */
+
+    height: 100%;  /* 确保消息框高度充满内容区域 */
+}
+
+.message p {
+    margin: 0;  /* 清除 p 标签默认的上下边距 */
+    padding: 0;  /* 清除 p 标签的默认内边距 */
+    display: inline-block;  /* 让 p 标签内的内容成为行内块级元素，保持垂直居中 */
+}
+
+.self-message .message {
+    background-color: #d1e7dd;
+}
+
+.avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+}
+
+.timestamp {
+    font-size: 0.75rem;
+    color: #999;
+    margin-top: 2px;
+}
+
+.chat-input {
+    border-radius: 20px;
+    padding: 8px 15px;
+}
+
+.send-btn {
+    background-color: #007bff;
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+    transition: background-color 0.3s ease;
+}
+
+.send-btn:hover {
+    background-color: #0056b3;
+}
+
+.plane-icon {
+    width: 18px;
+    /* 控制SVG图标大小 */
+    height: 18px;
+    filter: invert(1);
+    /* 将图标变成白色 */
+}
 </style>

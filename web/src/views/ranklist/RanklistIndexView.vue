@@ -1,5 +1,5 @@
 <template>
-    <ContentField>bang</ContentField>
+    <ContentField>开发中</ContentField>
 </template>
 
 <script setup>

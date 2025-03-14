@@ -126,6 +126,10 @@ public class WebSocketServer {
         }
     }
 
+    public void startChat(Integer aId, Integer bId) {
+
+    }
+
     public void startGame(Integer aId, Integer bId) {
         User a = userMapper.selectById(aId);
         User b = userMapper.selectById(bId);
@@ -140,6 +144,7 @@ public class WebSocketServer {
         resA.put("event", "matched");
         resA.put("opponent_username", b.getUsername());
         resA.put("opponent_photo", b.getPhoto());
+        resA.put("opponent_rating", b.getRating());
         resA.put("game_map", game.getG());  // 地图
         users.get(a.getId()).sendMessage(resA.toJSONString());
 
@@ -147,6 +152,7 @@ public class WebSocketServer {
         resB.put("event", "matched");
         resB.put("opponent_username", a.getUsername());
         resB.put("opponent_photo", a.getPhoto());
+        resB.put("opponent_rating", a.getRating());
         resB.put("game_map", game.getG());  // 地图
         users.get(b.getId()).sendMessage(resB.toJSONString());
     }
@@ -178,6 +184,15 @@ public class WebSocketServer {
         game.sendBullet(this.user.getId());
     }
 
+    private void sendChatMessage(Integer fromUserId, Integer toUserId, String message) {
+        JSONObject chat = new JSONObject();
+        chat.put("event", "chat_message");
+        chat.put("chat", message);
+        if(users.get(toUserId) == null ) return;
+        System.out.println("fromUserId" + fromUserId + " toUserId" + toUserId);
+        users.get(toUserId).sendMessage(chat.toJSONString());
+    }
+
     @OnMessage
     public void onMessage(String message, Session session) {
         // 从Client接收消息
@@ -191,6 +206,10 @@ public class WebSocketServer {
             move(data.getInteger("direction"));
         } else if("shoot".equals(event)) {
             shoot();
+        } else if("message".equals(event)) {
+            sendChatMessage(data.getInteger("from_user_id"),
+                    data.getInteger("to_user_id"),
+                    data.getString("message"));
         }
     }
 
@@ -204,6 +223,7 @@ public class WebSocketServer {
 
     public void sendMessage(String message) {
         // 发送消息
+        if(this.session == null) return;
         synchronized (this.session) {
             try {
                 this.session.getBasicRemote().sendText(message);
