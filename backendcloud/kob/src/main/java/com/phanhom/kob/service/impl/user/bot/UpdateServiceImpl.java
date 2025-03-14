@@ -51,8 +51,8 @@ public class UpdateServiceImpl implements UpdateService {
             return map;
         }
 
-        if(botName.length() > 100) {
-            map.put("error_message", "Bot名字不能超过100");
+        if(botName.length() > 16) {
+            map.put("error_message", "Bot名字不能超过16");
             return map;
         }
 
@@ -60,8 +60,8 @@ public class UpdateServiceImpl implements UpdateService {
             description = "-";
         }
 
-        if(description.length() > 300) {
-            map.put("error_message", "Bot描述不能超过300");
+        if(description.length() > 100) {
+            map.put("error_message", "Bot描述不能超过100");
             return map;
         }
 

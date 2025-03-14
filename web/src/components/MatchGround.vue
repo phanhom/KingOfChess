@@ -2,11 +2,22 @@
     <div class="matchground">
         <div class="card">
             <div class="avatar-wrapper">
-                <img :src="store.state.user.photo" class="avatar" alt="Player Avatar">
+                <div class="player-info">
+                    <img :src="store.state.user.photo" class="avatar" alt="Player Avatar">
+                    <p class="username" v-if="before_matching || matched">{{ store.state.user.username }}</p>
+                    <p class="rating" v-if="before_matching || matched">rating: {{ store.state.user.rating }}</p>
+                </div>
+
                 <div v-if="isMatching" class="loading-spinner"></div>
                 <p v-if="matched">-</p>
-                <img v-if="matched" :src="store.state.pk.opponent_photo" class="avatar" alt="Player Avatar">
+
+                <div class="opponent-info" v-if="matched">
+                    <img :src="store.state.pk.opponent_photo" class="avatar" alt="Player Avatar">
+                    <p class="username">{{ store.state.pk.opponent_username }}</p>
+                    <p class="rating">rating: {{ store.state.pk.opponent_rating }}</p>
+                </div>
             </div>
+            <br v-if="isMatching">
             <button class="match-button" @click="toggleMatching">
                 {{ isMatching ? '取消匹配' : '开始匹配' }}
             </button>
@@ -21,6 +32,7 @@ import { useStore } from 'vuex';
 // import store from '../store/index.js'
 
 const store = useStore();
+const before_matching = ref(true);
 const isMatching = ref(false);
 const matched = ref(false);
 const matchTime = ref(0);
@@ -28,6 +40,7 @@ let timer = null;
 const matchSound = new Audio('/sounds/letsroll.mp3'); // 替换为实际的音频文件路径
 
 const toggleMatching = () => {
+    before_matching.value = !before_matching.value;
     isMatching.value = !isMatching.value;
     if (isMatching.value) {
         store.state.pk.socket.send(JSON.stringify({
@@ -38,6 +51,7 @@ const toggleMatching = () => {
             matchTime.value++;
             if (store.state.pk.status === 'matched') {
                 matchSound.play();
+                before_matching.value = false;
                 isMatching.value = false;
                 matched.value = true;
                 // store.state.pk.status = "playing"   // 进入之后直接在那个页面写等5s才开始游戏
@@ -46,6 +60,7 @@ const toggleMatching = () => {
             }
         }, 1000);
     } else {
+        before_matching.value = true;
         store.state.pk.socket.send(JSON.stringify({
             event: 'stop-matching',
         }))
@@ -81,7 +96,7 @@ div.matchground {
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-bottom: 30px;
+    margin-bottom: 10px;
     gap: 30px;
 }
 
@@ -90,6 +105,9 @@ div.matchground {
     height: 100px;
     border-radius: 50%;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+
+    object-fit: cover;         /* 等比缩放并裁剪，确保图片铺满容器 */
+    object-position: center;   /* 将图片的中心部分作为显示区域 */
 }
 
 .loading-spinner {
@@ -110,6 +128,28 @@ div.matchground {
     to {
         transform: rotate(360deg);
     }
+}
+
+.username {
+    font-weight: bold;
+    font-size: 20px;
+    color: #2c3e50; /* 深蓝色，稳重且突出 */
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.15);
+    margin-top: 10px;
+}
+
+.rating {
+    color: #7f8c8d; /* 稍浅的灰色，作为次要信息 */
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.rating::before {
+    content: "⭐";  /* 星星图标 */
+    color: #f1c40f;
+    font-size: 16px;
 }
 
 .match-button {

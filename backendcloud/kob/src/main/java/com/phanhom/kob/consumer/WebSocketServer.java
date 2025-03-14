@@ -54,6 +54,7 @@ public class WebSocketServer {
     @OnOpen
     public void onOpen(Session session, @PathParam("token") String token) throws IOException {
         // 建立连接
+        // 限制最大数目????
         this.session = session;
 
         Integer userId = JwtUtil.JWT2UserID(token);
@@ -102,33 +103,24 @@ public class WebSocketServer {
     }
 
     // ????
-    public void settlement(Integer winnerId, Integer loserId) {
+    public static void settlement(Integer winnerId, Integer loserId) {
         User winner = userMapper.selectById(winnerId);
         User loser = userMapper.selectById(loserId);
         int winner_score = winner.getRating();
         int loser_score = loser.getRating();
         int diff = winner_score - loser_score;
-        int result = (int) Math.exp(-diff) * 9;
+        int result = (loser_score - winner_score) / 50;
         if(diff >= 0) {
-            result = Math.max(3, result);
-            winner.setRating(winner_score + result);
-            loser.setRating(loser_score - result);
-            userMapper.updateById(winner);
-            userMapper.updateById(loser);
+            result = 9 + Math.max(-4, result);
         } else {
-            diff *= -1;
-            result = result * -1 + 18;
-            result = Math.max(15, result);
-            winner.setRating(winner_score + result);
-            loser.setRating(loser_score - result);
-            userMapper.updateById(winner);
-            userMapper.updateById(loser);
+            result = 9 + Math.min(6, result);
         }
+        winner.setRating(Math.max(500, Math.min(3000, winner_score + result)));
+        loser.setRating(Math.max(500, Math.min(3000, loser_score - result)));
+        userMapper.updateById(winner);
+        userMapper.updateById(loser);
     }
 
-    public void startChat(Integer aId, Integer bId) {
-
-    }
 
     public void startGame(Integer aId, Integer bId) {
         User a = userMapper.selectById(aId);

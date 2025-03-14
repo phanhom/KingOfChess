@@ -34,8 +34,8 @@ public class RegisterServiceImpl  implements RegisterService {
             return map;
         }
 
-        if (username.length() > 20) {
-            map.put("error_message", "用户名长度不能大于20");
+        if (username.length() > 20 || username.length() < 3) {
+            map.put("error_message", "用户名长度不能大于20, 不能小于3");
             return map;
         }
 
@@ -74,7 +74,7 @@ public class RegisterServiceImpl  implements RegisterService {
 
         String encodedPassword = passwordEncoder.encode(password);
         String photo = "https://userpic.codeforces.org/no-title.jpg";
-        User user = new User(null, username, encodedPassword, photo, 1500, "");
+        User user = new User(null, username, encodedPassword, photo, 1500, "-");
         userMapper.insert(user);
 
         map.put("error_message", "success");

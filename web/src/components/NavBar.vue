@@ -35,6 +35,10 @@
               <li><a class="dropdown-item">待开发</a></li>
             </ul>
           </li>
+
+          <li class="nav-item">
+            <router-link to="/pk" :class="routeName == 'pk_index' ? 'nav-link active' : 'nav-link'">(内测中，数据请用户自行保存)</router-link>
+          </li>
         </ul>
         <ul class="navbar-nav" v-if="user.is_login">
           <li class="nav-item dropdown">

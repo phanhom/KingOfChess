@@ -9,7 +9,7 @@
                     </div>
                     <div class="col-6">
                         <p class="card-text">用户名：{{ store.state.user.username }}</p>
-                        <p>天梯：{{ store.state.pk.opponent_rating }}</p>
+                        <p>天梯：{{ store.state.user.rating }}</p>
                     </div>
                 </div>
                 <div class="card-body">

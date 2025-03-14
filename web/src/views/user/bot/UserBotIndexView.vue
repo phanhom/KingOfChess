@@ -3,15 +3,16 @@
         <div class="row">
             <div class="col-3" id="profile">
                 <div class="card">
-                    <img :src="store.state.user.photo" class="card-img-top" alt="..." style="width: 100%;">
+                    <img :src="store.state.user.photo" class="card-img-top" alt="...">
                     <div class="card-body">
                         <h5 class="card-title"
                             style="font-size: 1.5rem; font-weight: 600; color: #333; margin-bottom: 5px;">
                             {{ store.state.user.username }}
                         </h5>
                         <p style="font-size: 1rem; color: #666; margin-bottom: 10px;">
-                            Rating: {{ store.state.user.rating }}
+                            ⭐ rating: {{ store.state.user.rating }}
                         </p>
+                        <!-- 设置名字和简介长度 -->
                         <p class="card-text">{{ store.state.user.description }}</p>
 
                         <button type="button" class="btn btn-outline-dark" data-bs-toggle="modal"
@@ -126,8 +127,8 @@
                                 <tr v-for="bot in bots" :key="bot.id">
                                     <td>{{ bot.rating }}</td>
                                     <td>{{ bot.id }}</td>
-                                    <td>{{ bot.botName }}</td>
-                                    <td>{{ bot.description }}</td>
+                                    <td class="botname">{{ bot.botName }}</td>
+                                    <td class="description">{{ bot.description }}</td>
                                     <td>{{ bot.createtime }}</td>
                                     <td>
                                         <button type="button" class="btn btn-outline-dark float-end"
@@ -342,5 +343,37 @@ onMounted(async () => {
 
 .btn {
     margin-right: 5px;
+}
+
+#profile .card:hover {
+    /* transform: translateY(-5px); */
+    box-shadow: 0 5px 5px rgba(0, 0, 0, 0.15);
+}
+
+.card-img-top {
+    width: 100%;
+    min-height: 200px;
+    max-height: 400px;
+    object-fit: cover;         /* 等比缩放并裁剪，确保图片铺满容器 */
+    object-position: center;   /* 将图片的中心部分作为显示区域 */
+}
+
+#profile .btn-outline-dark {
+    width: 100%;
+    border-radius: 12px;
+    transition: background 0.3s ease;
+}
+
+.description {
+    max-width: 200px;
+    word-break: break-word;
+    /* 防止长单词撑破布局 */
+    white-space: pre-wrap;
+}
+
+.botname {
+    max-width: 100px;
+    word-break: break-word;
+    white-space: pre-wrap;
 }
 </style>

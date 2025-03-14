@@ -9,6 +9,9 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.concurrent.locks.ReentrantLock;
+
+import static com.phanhom.kob.consumer.WebSocketServer.settlement;
+
 // 检查死锁
 public class Game extends Thread {
     private final Integer rows;
@@ -456,9 +459,11 @@ public class Game extends Thread {
             }
         }
         if(!checkValid(true)) {
-//            if(status.equals("p1")) {
-//                settlement(p1.getId(), p2.getId());
-//            }
+            if(status.equals("p1")) {
+                settlement(p1.getId(), p2.getId());
+            } else if(status.equals("p2")) {
+                settlement(p2.getId(), p1.getId());
+            }
             sendResult();
         }
         super.run();

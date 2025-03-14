@@ -56,9 +56,28 @@ public class InfoServiceImpl implements InfoService {
             return res;
         }
 
+        if(username == null) {
+            res.put("error_message", "用户名不能为空");
+            return res;
+        }
+
+        if (username.length() > 20 || username.length() < 3) {
+            res.put("error_message", "用户名长度不能大于20, 不能小于3");
+            return res;
+        }
+
+        if (!username.matches("^[a-zA-Z0-9]+$")) {
+            res.put("error_message", "用户名只能包含字母和数字");
+            return res;
+        }
+
         if(description != null && description.length() > 80) {
             res.put("error_message", "描述最多80个字符");
             return res;
+        }
+
+        if(description == null || description.length() == 0) {
+            description = "-";
         }
 
         user.setUsername(username);

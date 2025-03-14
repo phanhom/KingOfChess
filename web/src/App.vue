@@ -1,6 +1,5 @@
 <template>
   <Navbar></Navbar>
-  <!-- <ContentField></ContentField> -->
   <router-view></router-view>
 </template>
 
@@ -9,7 +8,6 @@
 import { ref } from 'vue'
 import axios from 'axios'
 import Navbar from '@/components/NavBar.vue'
-import ContentField from '@/components/ContentField.vue'
 import "bootstrap/dist/css/bootstrap.min.css"
 import "bootstrap/dist/js/bootstrap.min.js"
 
@@ -17,6 +15,10 @@ import "bootstrap/dist/js/bootstrap.min.js"
 
 
 <style>
+* {
+    font-family: monospace;
+    font-size: large;
+}
 body {
   background-image: url("@/assets/images/background.jpg");
   background-size: cover;
