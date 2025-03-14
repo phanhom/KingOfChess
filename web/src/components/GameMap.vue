@@ -39,7 +39,8 @@
                         </div>
                     </div>
                     <div class="card-footer d-flex align-items-center">
-                        <input v-model="chat_input" type="text" class="form-control chat-input" placeholder="输入消息..." @keydown.enter="send_message">
+                        <input v-model="chat_input" type="text" class="form-control chat-input" placeholder="输入消息..."
+                            @keydown.enter="send_message">
                         <button type="button" class="btn btn-primary ms-2 send-btn" @click="send_message">
                             <img src="@/assets/images/snake.ico" alt="发送" class="plane-icon">
                         </button>
@@ -140,7 +141,7 @@ const send_message = () => {
         if (chatContainer.value) {
             chatContainer.value.scrollTop = chatContainer.value.scrollHeight;
         }
-    }, 300);
+    }, 100);
     chat_input.value = "";
 }
 
@@ -185,7 +186,7 @@ onMounted(() => {
                 if (chatContainer.value) {
                     chatContainer.value.scrollTop = chatContainer.value.scrollHeight;
                 }
-            }, 200);
+            }, 100);
         }
     }, 100);
 });
@@ -211,9 +212,12 @@ canvas:focus {
 .column {
     width: 20%;
     display: flex;
-    flex-direction: column;  /* 子元素垂直排列 */
-    height: 100%;  /* 确保有足够的高度 */
-    gap: 20px;  /* 可选，增加顶部和底部元素之间的间距 */
+    flex-direction: column;
+    /* 子元素垂直排列 */
+    height: 100%;
+    /* 确保有足够的高度 */
+    gap: 20px;
+    /* 可选，增加顶部和底部元素之间的间距 */
 }
 
 div.gamemap {
@@ -257,7 +261,8 @@ div.gamemap {
 }
 
 .section {
-    flex-grow: 1;  /* 让 section 填满剩余空间 */
+    flex-grow: 1;
+    /* 让 section 填满剩余空间 */
     display: flex;
     flex-direction: column;
 }
@@ -306,15 +311,24 @@ div.gamemap {
     margin-top: 5px;
 
     display: flex;
-    align-items: center;  /* 垂直居中 */
+    align-items: center;
+    /* 垂直居中 */
 
-    height: 100%;  /* 确保消息框高度充满内容区域 */
+    height: 100%;
+    /* 确保消息框高度充满内容区域 */
+    word-break: break-word;
+    /* 防止长单词撑破布局 */
+    white-space: pre-wrap;
+    /* 保留空格和换行 */
 }
 
 .message p {
-    margin: 0;  /* 清除 p 标签默认的上下边距 */
-    padding: 0;  /* 清除 p 标签的默认内边距 */
-    display: inline-block;  /* 让 p 标签内的内容成为行内块级元素，保持垂直居中 */
+    margin: 0;
+    /* 清除 p 标签默认的上下边距 */
+    padding: 0;
+    /* 清除 p 标签的默认内边距 */
+    display: inline-block;
+    /* 让 p 标签内的内容成为行内块级元素，保持垂直居中 */
 }
 
 .self-message .message {
