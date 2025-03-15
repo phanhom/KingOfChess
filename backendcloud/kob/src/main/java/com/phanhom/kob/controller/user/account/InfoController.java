@@ -2,10 +2,7 @@ package com.phanhom.kob.controller.user.account;
 
 import com.phanhom.kob.service.user.account.InfoService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -18,6 +15,12 @@ public class InfoController {
     @GetMapping("/user/account/info")
     public Map<String, String> getinfo() {
         return infoService.getinfo();
+    }
+
+    @PostMapping("/user/account/photo/userid")
+    public Map<String, String> getuserphoto(@RequestBody Map<String, String> map) {
+        Integer id = Integer.parseInt(map.get("id"));
+        return infoService.getuserphoto(id);
     }
 
     @PostMapping("/user/account/modifyinfo")

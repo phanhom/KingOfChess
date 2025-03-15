@@ -39,6 +39,26 @@ public class InfoServiceImpl implements InfoService {
     }
 
     @Override
+    public Map<String, String> getuserphoto(Integer id) {
+        UsernamePasswordAuthenticationToken authenticationToken =
+                (UsernamePasswordAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
+
+        UserDetailsImpl loginUser = (UserDetailsImpl) authenticationToken.getPrincipal();
+        User user = loginUser.getUser();
+        Map<String, String> res = new HashMap<>();
+        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("id", id);
+        User targetUser = userMapper.selectOne(queryWrapper);
+        if(targetUser == null) {
+            res.put("error_message", "用户不存在");
+            return res;
+        }
+        res.put("error_message", "success");
+        res.put("photo", targetUser.getPhoto());
+        return res;
+    }
+
+    @Override
     public Map<String, String> modifyInfo(String username, String photo, String description) {
         UsernamePasswordAuthenticationToken authenticationToken =
                 (UsernamePasswordAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();

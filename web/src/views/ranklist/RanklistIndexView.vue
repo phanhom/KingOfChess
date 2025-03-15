@@ -12,13 +12,10 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-for="user in users" :key="user.id">
+                        <tr v-for="user in users" :key="user.id" @mouseover="showUserPhoto(user.id, $event)"
+                            @mouseleave="hideUserPhoto">
                             <td class="userid">{{ user.id }}</td>
                             <td class="username" :style="getRatingStyle(user.rating)">
-                                <!-- <span v-if="user.rating > 2000">
-                                    <span style="color: black">⭐️</span>
-                                    <span style="color: red">{{ user.username }}</span>
-                                </span> -->
                                 <span>{{ user.username }}</span>
                             </td>
                             <td class="description">{{ user.description }}</td>
@@ -29,27 +26,63 @@
             </div>
         </div>
     </div>
+    <!-- <div v-if="photoUrl" class="photo-popup">
+        <img :src="photoUrl" alt="User Photo" />
+    </div> -->
+    <div v-show="photoUrl" class="photo-popup"
+        :style="{ top: photoPosition.top + 'px', left: photoPosition.left + 'px' }">
+        <img :src="photoUrl" alt="User Photo" />
+    </div>
 </template>
 
 <script setup>
-import { onMounted, ref, reactive } from 'vue';
+import { onMounted, ref, reactive} from 'vue';
 import axios from 'axios';
+import { useStore } from 'vuex';
 
 let users = ref([]);
+const store = useStore();
+let photoUrl = ref(null);
+let hoverTimeout = ref(null);
+let time_cnt = ref(0)
+let photoPosition = reactive({ top: 10, left: 10 });
+
+// Handle hover event to show photo after 1 second
+const showUserPhoto = async (id, event) => {
+    hoverTimeout.value = setTimeout(async () => {
+        const res = await axios.post('http://127.0.0.1:3000/user/account/photo/userid', {
+            id: id,
+        }, {
+            headers: {
+                Authorization: `Bearer ${store.state.user.token}`,
+            }
+        });
+        photoUrl.value = res.data.photo; // Assuming response contains the URL of the photo
+        // if(photoPosition.top == 0) {
+        //     photoPosition.top = event.clientY - 100; // 100px above the cursor
+        //     photoPosition.left = event.clientX - 50;
+        // }
+    }, 500); // 1 second delay
+};
+
+const hideUserPhoto = () => {
+    clearTimeout(hoverTimeout.value);
+    photoUrl.value = null;
+};
 
 const getRatingStyle = (rating) => {
     if (rating <= 1500) {
-        return { color: '#aaaaaa'};
+        return { color: '#aaaaaa' };
     } else if (rating <= 1550) {
-        return { color: '#00bcd4'}; // 青色
+        return { color: '#00bcd4' }; // 青色
     } else if (rating <= 1650) {
-        return { color: '#2F14EC'}; // 蓝色
+        return { color: '#2F14EC' }; // 蓝色
     } else if (rating <= 1750) {
-        return { color: '#C600FF'}; // 紫色
+        return { color: '#C600FF' }; // 紫色
     } else if (rating <= 1850) {
-        return { color: '#FBBB00'}; // 黄色
+        return { color: '#FBBB00' }; // 黄色
     } else if (rating <= 2000) {
-        return { color: '#FF2A19'}; // 红色
+        return { color: '#FF2A19' }; // 红色
     } else {
         return { color: '#000000' }; // 2000以上
     }
@@ -94,7 +127,7 @@ onMounted(async () => {
     white-space: pre-wrap;
 }
 
-.username{
+.username {
     font-weight: bold;
     width: 180px;
     max-width: 300px;
@@ -105,5 +138,19 @@ onMounted(async () => {
 
 .rating {
     text-align: right;
+}
+
+.photo-popup {
+    position: absolute;
+    padding: 10px;
+    background: rgba(0, 0, 0, 0.7);
+    border-radius: 5px;
+    transition: opacity 0.3s ease-in-out;
+}
+
+.photo-popup img {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
 }
 </style>
