@@ -24,7 +24,7 @@ onMounted(() => {
 
   socket = new WebSocket(socketUrl);
   socket.onopen = () => {
-    console.log("WebSocket连接成功");
+    // console.log("WebSocket连接成功");
     store.commit('updateSocket', socket);
   }
   socket.onmessage = (msg) => {
@@ -72,7 +72,7 @@ onMounted(() => {
 });
 onUnmounted(() => {
   socket.onclose = () => {
-    console.log("WebSocket关闭");
+    // console.log("WebSocket关闭");
   };
   socket.close();
   store.state.pk.status = "matching";

@@ -59,7 +59,7 @@ public class MatchingPool extends Thread{
     }
 
     private void matchPlayers() {
-        System.out.println("matching--" + players.toString());
+//        System.out.println("matching--" + players.toString());
         boolean[] used = new boolean[players.size()];
         for(int i = 0; i < players.size(); i++) {
             if(used[i]) continue;
@@ -88,7 +88,7 @@ public class MatchingPool extends Thread{
         data.add("a_id", a.getUserId().toString());
         data.add("b_id", b.getUserId().toString());
         restTemplate.postForObject(startGameUrl, data, String.class);
-        System.out.println("send result" + a.getUserId() + " " + b.getUserId());
+//        System.out.println("send result" + a.getUserId() + " " + b.getUserId());
     }
 
     @Override

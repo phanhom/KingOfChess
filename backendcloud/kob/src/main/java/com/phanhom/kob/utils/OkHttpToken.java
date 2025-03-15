@@ -30,10 +30,10 @@ public class OkHttpToken {
         String conclusion = jsonObject.getString("conclusion");
 
         if ("不合规".equals(conclusion)) {
-            System.out.println("不合规");
+//            System.out.println("不合规");
             return false;
         }
-        System.out.println("合规");
+//        System.out.println("合规");
         return true;
     }
 

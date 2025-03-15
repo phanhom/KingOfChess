@@ -15,7 +15,7 @@ public class BotRunningController {
 
     @PostMapping("/bot/add")
     public String addBot(@RequestParam MultiValueMap<String, String> map) {
-        System.out.println("add bot");
+//        System.out.println("add bot");
         Integer userId = Integer.parseInt(map.getFirst("user_id"));
         String botCode = map.getFirst("bot_code");
         String input = map.getFirst("input");
