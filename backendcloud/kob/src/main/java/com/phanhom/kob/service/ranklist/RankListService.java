@@ -6,4 +6,6 @@ import java.util.List;
 
 public interface RankListService {
     List<User> ranklist();
+    List<User> ranklistpage(Integer page);
+    Integer count();
 }

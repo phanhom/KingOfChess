@@ -34,6 +34,11 @@ const router = createRouter({
       component: RanklistIndexView,
     },
     {
+      path: '/ranklist/:page',
+      name: 'ranklist_index_page',
+      component: RanklistIndexView,
+    },
+    {
       path: '/record',
       name: 'record_index',
       component: RecordIndexView,

@@ -5,8 +5,8 @@
                 <div class="card">
                     <img :src="store.state.user.photo" class="card-img-top" alt="...">
                     <div class="card-body">
-                        <h5 class="card-title"
-                            style="font-size: 1.5rem; font-weight: 600; color: #333; margin-bottom: 5px;">
+                        <h5 class="card-title username"
+                            :style="getRatingStyle(store.state.user.rating)">
                             {{ store.state.user.username }}
                         </h5>
                         <p style="font-size: 1rem; color: #666; margin-bottom: 10px;">
@@ -317,6 +317,24 @@ const removebot_func = async (bot) => {
     }
 }
 
+const getRatingStyle = (rating) => {
+    if (rating <= 1500) {
+        return { color: '#aaaaaa' };
+    } else if (rating <= 1550) {
+        return { color: '#00bcd4' }; // 青色
+    } else if (rating <= 1650) {
+        return { color: '#2F14EC' }; // 蓝色
+    } else if (rating <= 1750) {
+        return { color: '#C600FF' }; // 紫色
+    } else if (rating <= 1850) {
+        return { color: '#FBBB00' }; // 黄色
+    } else if (rating <= 2000) {
+        return { color: '#FF2A19' }; // 红色
+    } else {
+        return { color: '#000000' }; // 2000以上
+    }
+};
+
 const refresh = () => {
     axios.post('http://127.0.0.1:3000/user/bot/get', null, {
         headers: {
@@ -343,6 +361,10 @@ onMounted(async () => {
 
 .btn {
     margin-right: 5px;
+}
+
+.username {
+    font-size: 1.5rem; font-weight: 600; color: #333; margin-bottom: 5px;
 }
 
 #profile .card:hover {

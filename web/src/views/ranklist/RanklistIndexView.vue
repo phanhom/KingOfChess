@@ -12,9 +12,9 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-for="user in users" :key="user.id" @mouseover="showUserPhoto(user.id, $event)"
+                        <tr v-for="(user, idx) in users" :key="user.id" @mouseover="showUserPhoto(user.id)"
                             @mouseleave="hideUserPhoto">
-                            <td class="userid">{{ user.id }}</td>
+                            <td class="userid">{{ currentPage * 20 - 20 + idx + 1 }}</td>
                             <td class="username" :style="getRatingStyle(user.rating)">
                                 <span>{{ user.username }}</span>
                             </td>
@@ -23,6 +23,17 @@
                         </tr>
                     </tbody>
                 </table>
+            </div>
+            <div class="pagination-controls">
+                <button class="btn btn-outline-primary" :disabled="currentPage === 1"
+                    @click="goToPage(currentPage - 1)">
+                    &lt;
+                </button>
+                <span>{{ currentPage }} / {{ totalPages }}</span>
+                <button class="btn btn-outline-primary" :disabled="currentPage === totalPages"
+                    @click="goToPage(currentPage + 1)">
+                    &gt;
+                </button>
             </div>
         </div>
     </div>
@@ -36,7 +47,7 @@
 </template>
 
 <script setup>
-import { onMounted, ref, reactive} from 'vue';
+import { onMounted, ref, reactive } from 'vue';
 import axios from 'axios';
 import { useStore } from 'vuex';
 
@@ -47,9 +58,13 @@ let hoverTimeout = ref(null);
 let time_cnt = ref(0)
 let photoPosition = reactive({ top: 10, left: 10 });
 
+const user_count = ref(0);
+let currentPage = ref(1); // Current page
+let totalPages = ref(1); // Total number of pages
+
 
 // Handle hover event to show photo after 1 second
-const showUserPhoto = async (id, event) => {
+const showUserPhoto = async (id) => {
     hoverTimeout.value = setTimeout(async () => {
         const res = await axios.post('http://127.0.0.1:3000/user/account/photo/userid', {
             id: id,
@@ -59,11 +74,7 @@ const showUserPhoto = async (id, event) => {
             }
         });
         photoUrl.value = res.data.photo; // Assuming response contains the URL of the photo
-        // if(photoPosition.top == 0) {
-        //     photoPosition.top = event.clientY - 100; // 100px above the cursor
-        //     photoPosition.left = event.clientX - 50;
-        // }
-    }, 500); // 1 second delay
+    }, 700); // 1 second delay
 };
 
 const hideUserPhoto = () => {
@@ -89,9 +100,37 @@ const getRatingStyle = (rating) => {
     }
 };
 
-onMounted(async () => {
-    const res = await axios.get('http://127.0.0.1:3000/user/ranklist');
+const fetchData = async (page) => {
+    const res = await axios.get('http://127.0.0.1:3000/user/ranklist', {
+        params: { page: page }
+    });
     users.value = res.data;
+};
+
+const fetchUserCount = async () => {
+    user_count.value = await axios.get('http://127.0.0.1:3000/user/ranklist/count');
+    totalPages.value = Math.ceil(user_count.value.data / 20); // Calculate total pages based on count and items per page
+};
+
+
+// Handle page change
+const goToPage = (page) => {
+    if (page >= 1 && page <= totalPages.value) {
+        currentPage.value = page;
+        fetchData(page);
+    }
+};
+
+onMounted(async () => {
+    // user_count.value = await axios.get('http://127.0.0.1:3000/user/ranklist/count');
+    // totalPages.value = Math.ceil(user_count.value.data / 10);
+    // console.log(user_count.value.data)
+    // const res = await axios.get('http://127.0.0.1:3000/user/ranklist', {
+    //     params: { page: 1 }
+    // });
+    // users.value = res.data;
+    await fetchUserCount();
+    await fetchData(currentPage.value);
 });
 </script>
 
@@ -105,20 +144,26 @@ onMounted(async () => {
     margin-top: 20px;
 }
 
-.card-body {
+/* .card-body {
     display: flex;
     justify-content: center;
-    /* 居中 */
     align-items: center;
-    /* 居中 */
     height: 100%;
-    /* 确保有足够的高度 */
+    min-height: 600px;
+} */
+
+.card-body {
+    display: flex;
+    flex-direction: column; /* Align items vertically */
+    justify-content: flex-start; /* Align the table to the top */
+    align-items: center;
+    height: 100%;
+    min-height: 600px; /* Ensure card has a minimum height */
 }
 
 .description {
     max-width: 50vh;
     word-break: break-word;
-    /* 防止长单词撑破布局 */
     white-space: pre-wrap;
 }
 
@@ -153,5 +198,30 @@ onMounted(async () => {
     width: 100px;
     height: 100px;
     object-fit: cover;
+}
+
+.pagination-controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.pagination-controls button {
+    margin: 0 10px;
+    padding: 8px 12px;
+    font-size: 1rem;
+    border-radius: 5px;
+}
+
+.pagination-controls button:disabled {
+    background-color: #f0f0f0;
+    cursor: not-allowed;
+}
+
+.pagination-text {
+    font-size: 1.2rem;
+    font-weight: 600;
 }
 </style>

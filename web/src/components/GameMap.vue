@@ -78,8 +78,8 @@
                     </div>
                     <div class="modal-body">
                         <p>{{ winner }} 获胜！</p>
-                        <p v-if="winner_is_me" style="color: blue;">Rating上升: +{{ store.state.pk.rating_change }}</p>
-                        <p v-else style="color: red;">Rating下降: -{{ store.state.pk.rating_change }}</p>
+                        <p v-if="winner_is_me" style="color: blue;">Rating: +{{ store.state.pk.rating_change }}</p>
+                        <p v-else style="color: red;">Rating: -{{ store.state.pk.rating_change }}</p>
                         <!-- from score to score ! ???? -->
                     </div>
                     <div class="modal-footer">
@@ -167,13 +167,17 @@ onMounted(() => {
                 if (store.state.pk.result == "deuce") {
                     winner.value = "平局, 没有玩家";
                 } else {
-                    winner.value = store.state.pk.result == "p2" ? "红方" : "蓝方";
+                    // winner.value = store.state.pk.result == "p2" ? "红方" : "蓝方";
                     if(store.state.pk.result == 'p2' && store.state.user.id == store.state.pk.p2_id) {
                         console.log("test1");
+                        winner.value = store.state.user.username;
                         winner_is_me.value = true;
                     } else if(store.state.pk.result == 'p1' && store.state.user.id == store.state.pk.p1_id) {
+                        winner.value = store.state.user.username;
                         console.log("test2");
                         winner_is_me.value = true;
+                    } else {
+                        winner.value = store.state.pk.opponent_username;
                     }
                 }
                 console.log("游戏结束");

@@ -122,9 +122,12 @@ public class WebSocketServer {
         JSONObject res = new JSONObject();
         res.put("event", "result");
         res.put("change", result);
-        // ???? 是不是null，要加判断
-        users.get(winnerId).sendMessage(res.toJSONString());
-        users.get(loserId).sendMessage(res.toJSONString());
+        if(users.get(winnerId) != null) {
+            users.get(winnerId).sendMessage(res.toJSONString());
+        }
+        if(users.get(loserId) != null) {
+            users.get(loserId).sendMessage(res.toJSONString());
+        }
     }
 
 
@@ -187,7 +190,7 @@ public class WebSocketServer {
         chat.put("event", "chat_message");
         chat.put("chat", message);
         if(users.get(toUserId) == null ) return;
-        System.out.println("fromUserId" + fromUserId + " toUserId" + toUserId);
+//        System.out.println("fromUserId" + fromUserId + " toUserId" + toUserId);
         users.get(toUserId).sendMessage(chat.toJSONString());
     }
 

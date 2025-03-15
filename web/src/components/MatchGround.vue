@@ -4,7 +4,7 @@
             <div class="avatar-wrapper">
                 <div class="player-info">
                     <img :src="store.state.user.photo" class="avatar" alt="Player Avatar">
-                    <p class="username" v-if="before_matching || matched">{{ store.state.user.username }}</p>
+                    <p class="username" :style="getRatingStyle(store.state.user.rating)" v-if="before_matching || matched">{{ store.state.user.username }}</p>
                     <p class="rating" v-if="before_matching || matched">rating: {{ store.state.user.rating }}</p>
                 </div>
 
@@ -13,11 +13,11 @@
 
                 <div class="opponent-info" v-if="matched">
                     <img :src="store.state.pk.opponent_photo" class="avatar" alt="Player Avatar">
-                    <p class="username">{{ store.state.pk.opponent_username }}</p>
+                    <p class="username" :style="getRatingStyle(store.state.pk.opponent_rating)">{{ store.state.pk.opponent_username }}</p>
                     <p class="rating">rating: {{ store.state.pk.opponent_rating }}</p>
                 </div>
             </div>
-            <br v-if="isMatching">
+            <p v-if="isMatching"> </p>
             <button class="match-button" @click="toggleMatching">
                 {{ isMatching ? '取消匹配' : '开始匹配' }}
             </button>
@@ -65,6 +65,24 @@ const toggleMatching = () => {
             event: 'stop-matching',
         }))
         clearInterval(timer);
+    }
+};
+
+const getRatingStyle = (rating) => {
+    if (rating <= 1500) {
+        return { color: '#aaaaaa' };
+    } else if (rating <= 1550) {
+        return { color: '#00bcd4' }; // 青色
+    } else if (rating <= 1650) {
+        return { color: '#2F14EC' }; // 蓝色
+    } else if (rating <= 1750) {
+        return { color: '#C600FF' }; // 紫色
+    } else if (rating <= 1850) {
+        return { color: '#FBBB00' }; // 黄色
+    } else if (rating <= 2000) {
+        return { color: '#FF2A19' }; // 红色
+    } else {
+        return { color: '#000000' }; // 2000以上
     }
 };
 
