@@ -65,6 +65,8 @@ onMounted(() => {
       store.commit('updateChatMessage', data.chat) // ????
     } else if (data.event == 'heartbeat') {
       store.commit('updateOnlineCount', data.data)
+    } else if (data.event == 'result') {
+      store.commit('updateRatingChange', data.change)
     }
   }
 });

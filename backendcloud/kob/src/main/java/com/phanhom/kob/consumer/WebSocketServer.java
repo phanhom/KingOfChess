@@ -119,6 +119,12 @@ public class WebSocketServer {
         loser.setRating(Math.max(500, Math.min(3000, loser_score - result)));
         userMapper.updateById(winner);
         userMapper.updateById(loser);
+        JSONObject res = new JSONObject();
+        res.put("event", "result");
+        res.put("change", result);
+        // ???? 是不是null，要加判断
+        users.get(winnerId).sendMessage(res.toJSONString());
+        users.get(loserId).sendMessage(res.toJSONString());
     }
 
 

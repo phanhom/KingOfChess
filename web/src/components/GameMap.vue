@@ -78,6 +78,9 @@
                     </div>
                     <div class="modal-body">
                         <p>{{ winner }} 获胜！</p>
+                        <p v-if="winner_is_me" style="color: blue;">Rating上升: +{{ store.state.pk.rating_change }}</p>
+                        <p v-else style="color: red;">Rating下降: -{{ store.state.pk.rating_change }}</p>
+                        <!-- from score to score ! ???? -->
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-primary" @click="restartGame">重新开始</button>
@@ -111,6 +114,7 @@ const store = useStore();
 // 左右两个card上显示作者头像名字，bot名字，rating?
 // 显示死亡信息，并且定时从新开始显示一个按钮，点击之后重新开始游戏? 
 const winner = ref("");
+const winner_is_me = ref(false);
 const plane0_score = ref(0);
 const plane1_score = ref(0);
 const chat_history = ref([]);
@@ -164,6 +168,13 @@ onMounted(() => {
                     winner.value = "平局, 没有玩家";
                 } else {
                     winner.value = store.state.pk.result == "p2" ? "红方" : "蓝方";
+                    if(store.state.pk.result == 'p2' && store.state.user.id == store.state.pk.p2_id) {
+                        console.log("test1");
+                        winner_is_me.value = true;
+                    } else if(store.state.pk.result == 'p1' && store.state.user.id == store.state.pk.p1_id) {
+                        console.log("test2");
+                        winner_is_me.value = true;
+                    }
                 }
                 console.log("游戏结束");
                 showModal();

@@ -47,6 +47,7 @@ let hoverTimeout = ref(null);
 let time_cnt = ref(0)
 let photoPosition = reactive({ top: 10, left: 10 });
 
+
 // Handle hover event to show photo after 1 second
 const showUserPhoto = async (id, event) => {
     hoverTimeout.value = setTimeout(async () => {
@@ -143,7 +144,7 @@ onMounted(async () => {
 .photo-popup {
     position: absolute;
     padding: 10px;
-    background: rgba(0, 0, 0, 0.7);
+    background: rgba(0, 0, 0, 0.5);
     border-radius: 5px;
     transition: opacity 0.3s ease-in-out;
 }

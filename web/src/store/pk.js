@@ -30,6 +30,7 @@ export default {
         online_count: null,
         chat_messages: [],
         new_message: '',
+        rating_change: '',
     },
     mutations: {
         updateSocket(state, socket) {
@@ -88,6 +89,9 @@ export default {
             //     user_id: chat.userid,
             //     message: chat.message,
             // });
+        },
+        updateRatingChange(state, rating_change) {
+            state.rating_change = rating_change;
         },
         send_message(state, msg) {
             if (state.socket != null) {
