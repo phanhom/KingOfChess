@@ -5,11 +5,13 @@ import com.phanhom.kob.mapper.UserMapper;
 import com.phanhom.kob.pojo.User;
 import com.phanhom.kob.service.impl.utils.UserDetailsImpl;
 import com.phanhom.kob.service.user.account.InfoService;
+import com.phanhom.kob.utils.OkHttpToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -59,7 +61,7 @@ public class InfoServiceImpl implements InfoService {
     }
 
     @Override
-    public Map<String, String> modifyInfo(String username, String photo, String description) {
+    public Map<String, String> modifyInfo(String username, String photo, String description) throws IOException {
         UsernamePasswordAuthenticationToken authenticationToken =
                 (UsernamePasswordAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
 
@@ -91,8 +93,18 @@ public class InfoServiceImpl implements InfoService {
             return res;
         }
 
+        if(!OkHttpToken.checkText(username)) {
+            res.put("error_message", "用户名含有敏感词");
+            return res;
+        }
+
         if(description != null && description.length() > 80) {
             res.put("error_message", "描述最多80个字符");
+            return res;
+        }
+
+        if(!OkHttpToken.checkText(description)) {
+            res.put("error_message", "简介含有敏感词");
             return res;
         }
 

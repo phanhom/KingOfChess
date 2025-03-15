@@ -4,6 +4,7 @@ import com.phanhom.kob.service.user.account.InfoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -24,7 +25,7 @@ public class InfoController {
     }
 
     @PostMapping("/user/account/modifyinfo")
-    public Map<String, String> modifyInfo(@RequestBody Map<String, String> map) {
+    public Map<String, String> modifyInfo(@RequestBody Map<String, String> map) throws IOException {
         String username = map.get("username");
         String photo = map.get("photo");
         String description = map.get("description");

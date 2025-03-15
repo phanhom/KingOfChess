@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.IOException;
 import java.util.Map;
 
 @RestController
@@ -16,7 +17,7 @@ public class AddController {
     private AddService addService;
 
     @PostMapping("/user/bot/add")
-    public Map<String, String> add(@RequestBody Map<String, String> map) {
+    public Map<String, String> add(@RequestBody Map<String, String> map) throws IOException {
         return addService.add(map);
     }
 }

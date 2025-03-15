@@ -4,10 +4,12 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.phanhom.kob.mapper.UserMapper;
 import com.phanhom.kob.pojo.User;
 import com.phanhom.kob.service.user.account.RegisterService;
+import com.phanhom.kob.utils.OkHttpToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,7 +23,7 @@ public class RegisterServiceImpl  implements RegisterService {
     private PasswordEncoder passwordEncoder;
 
     @Override
-    public Map<String, String> register(String username, String password, String confirmedPassword) {
+    public Map<String, String> register(String username, String password, String confirmedPassword) throws IOException {
         Map<String, String> map = new HashMap<>();
         if (username == null || password == null || confirmedPassword == null) {
             map.put("error_message", "用户名或密码不能为空");
@@ -49,6 +51,11 @@ public class RegisterServiceImpl  implements RegisterService {
 
         if (!username.matches("^[a-zA-Z0-9]+$")) {
             map.put("error_message", "用户名只能包含字母和数字");
+            return map;
+        }
+
+        if(!OkHttpToken.checkText(username)) {
+            map.put("error_message", "用户名含有敏感词");
             return map;
         }
 

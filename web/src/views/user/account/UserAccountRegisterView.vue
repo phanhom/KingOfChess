@@ -17,7 +17,10 @@
                         <input v-model="confirmedPassword" type="password" class="form-control" id="confirmedPassword" placeholder="请再次输入密码">
                     </div>
                     <div class="error_message">{{ error_message }}</div>
-                    <button type="submit" class="btn btn-primary">注册</button>
+                    <button type="submit" class="btn btn-primary">
+                        <span v-if="loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                        {{ loading ? '' : '注册' }}
+                    </button>
                 </form>
             </div>
         </div>
@@ -30,6 +33,7 @@ import { ref } from 'vue'
 import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
 import axios from "axios"
+import { debounce } from "lodash";
 // 创建提交图片的时候必须以png jpg jpeg结尾
 
 const username = ref('')
@@ -38,8 +42,11 @@ const confirmedPassword = ref('')
 let error_message = ref('')
 const router = useRouter()
 
-const register = async () => {
+const loading = ref(false) // 控制加载状态
 
+const register = async () => {
+    if(loading.value==true) return;
+    loading.value = true; // 开始加载，禁用按钮
     // 注册
     // console.log(store.state.user.token);
     const res = await axios.post('http://127.0.0.1:3000/user/account/register', {
@@ -56,9 +63,10 @@ const register = async () => {
         // console.log(res.data.error_message);
     }
     // console.log('注册', res);
+    loading.value = false; // 请求结束，恢复按钮可用
 }
 
-
+// const debouncedRegister = debounce(register, 2000);
 
 </script>
 

@@ -5,12 +5,14 @@ import com.phanhom.kob.pojo.Bot;
 import com.phanhom.kob.pojo.User;
 import com.phanhom.kob.service.impl.utils.UserDetailsImpl;
 import com.phanhom.kob.service.user.bot.UpdateService;
+import com.phanhom.kob.utils.OkHttpToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -22,7 +24,7 @@ public class UpdateServiceImpl implements UpdateService {
     private BotMapper botMapper;
 
     @Override
-    public Map<String, String> update(Map<String, String> data) {
+    public Map<String, String> update(Map<String, String> data) throws IOException {
         UsernamePasswordAuthenticationToken authenticationToken =
                 (UsernamePasswordAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
         UserDetailsImpl loginUser = (UserDetailsImpl) authenticationToken.getPrincipal();
@@ -56,12 +58,21 @@ public class UpdateServiceImpl implements UpdateService {
             return map;
         }
 
+        if(!OkHttpToken.checkText(botName)) {
+            map.put("error_message", "Bot名含有敏感词");
+            return map;
+        }
+
         if(description == null || description.length() == 0) {
             description = "-";
         }
 
         if(description.length() > 100) {
             map.put("error_message", "Bot描述不能超过100");
+            return map;
+        }
+        if(!OkHttpToken.checkText(description)) {
+            map.put("error_message", "简介含有敏感词");
             return map;
         }
 

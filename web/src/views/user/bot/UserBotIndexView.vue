@@ -5,16 +5,13 @@
                 <div class="card">
                     <img :src="store.state.user.photo" class="card-img-top" alt="...">
                     <div class="card-body">
-                        <h5 class="card-title username"
-                            :style="getRatingStyle(store.state.user.rating)">
+                        <h5 class="card-title username" :style="getRatingStyle(store.state.user.rating)">
                             {{ store.state.user.username }}
                         </h5>
                         <p style="font-size: 1rem; color: #666; margin-bottom: 10px;">
                             ⭐ rating: {{ store.state.user.rating }}
                         </p>
-                        <!-- 设置名字和简介长度 -->
                         <p class="card-text">{{ store.state.user.description }}</p>
-
                         <button type="button" class="btn btn-outline-dark" data-bs-toggle="modal"
                             data-bs-target="#changeProfileModal">
                             修改个人信息
@@ -52,8 +49,11 @@
                                     <div class="modal-footer">
                                         <div class="error-message" style="color: red;">{{ modify_info.error_message }}
                                         </div>
-                                        <button type="button" class="btn btn-primary"
-                                            @click="update_user_info">提交</button>
+                                        <button type="button" class="btn btn-primary" @click="update_user_info">
+                                            <span v-if="loading" class="spinner-border spinner-border-sm" role="status"
+                                                aria-hidden="true"></span>
+                                            {{ loading ? '' : '提交' }}
+                                        </button>
                                         <button type="button" class="btn btn-secondary"
                                             data-bs-dismiss="modal">关闭</button>
                                     </div>
@@ -104,7 +104,11 @@
                                     </div>
                                     <div class="modal-footer">
                                         <div class="error-message" style="color: red;">{{ addbot.error_message }}</div>
-                                        <button type="button" class="btn btn-primary" @click="addbot_func">提交</button>
+                                        <button type="button" class="btn btn-primary" @click="addbot_func">
+                                            <span v-if="loading" class="spinner-border spinner-border-sm" role="status"
+                                                aria-hidden="true"></span>
+                                            {{ loading ? '' : '提交' }}
+                                        </button>
                                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
                                             @click="clear_error_message">关闭</button>
                                     </div>
@@ -171,7 +175,12 @@
                                                         <div class="error-message" style="color: red;">{{
                                                             addbot.error_message }}</div>
                                                         <button type="button" class="btn btn-primary"
-                                                            @click="updatebot_func(bot)">提交</button>
+                                                            @click="updatebot_func(bot)">
+                                                            <span v-if="loading"
+                                                                class="spinner-border spinner-border-sm" role="status"
+                                                                aria-hidden="true"></span>
+                                                            {{ loading ? '' : '提交' }}
+                                                        </button>
                                                         <button type="button" class="btn btn-secondary"
                                                             data-bs-dismiss="modal"
                                                             @click="clear_error_message">关闭</button>
@@ -219,8 +228,11 @@ const modify_info = reactive({
     description: store.state.user.description,
     error_message: '',
 });
+const loading = ref(false);
 
 const update_user_info = async () => {
+    if (loading.value == true) return;
+    loading.value = true;
     modify_info.error_message = '';
     const res = await axios.post('http://127.0.0.1:3000/user/account/modifyinfo', {
         username: modify_info.username,
@@ -239,6 +251,7 @@ const update_user_info = async () => {
         alert("修改成功");
         location.reload();
     }
+    loading.value = false;
 }
 
 const clear_error_message = () => {
@@ -246,6 +259,8 @@ const clear_error_message = () => {
 }
 
 const addbot_func = async () => {
+    if (loading.value == true) return;
+    loading.value = true;
     addbot.error_message = '';
     const res = await axios.post('http://127.0.0.1:3000/user/bot/add', {
         botName: addbot.botName,
@@ -268,9 +283,12 @@ const addbot_func = async () => {
     } else {
         addbot.error_message = res.data.error_message;
     }
+    loading.value = false;
 }
 
 const updatebot_func = async (bot) => {
+    if (loading.value == true) return;
+    loading.value = true;
     addbot.error_message = '';
     console.log(bot.id);
     const res = await axios.post('http://127.0.0.1:3000/user/bot/update', {
@@ -291,6 +309,7 @@ const updatebot_func = async (bot) => {
     } else {
         addbot.error_message = res.data.error_message;
     }
+    loading.value = false;
 }
 
 const removebot_func = async (bot) => {
@@ -364,7 +383,10 @@ onMounted(async () => {
 }
 
 .username {
-    font-size: 1.5rem; font-weight: 600; color: #333; margin-bottom: 5px;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 5px;
 }
 
 #profile .card:hover {
@@ -376,8 +398,10 @@ onMounted(async () => {
     width: 100%;
     min-height: 200px;
     max-height: 400px;
-    object-fit: cover;         /* 等比缩放并裁剪，确保图片铺满容器 */
-    object-position: center;   /* 将图片的中心部分作为显示区域 */
+    object-fit: cover;
+    /* 等比缩放并裁剪，确保图片铺满容器 */
+    object-position: center;
+    /* 将图片的中心部分作为显示区域 */
 }
 
 #profile .btn-outline-dark {
