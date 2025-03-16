@@ -3,12 +3,14 @@ package com.phanhom.kob.controller.pk;
 import com.phanhom.kob.service.pk.StartGameService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Objects;
 
+@CrossOrigin
 @RestController
 public class StartGameController {
 

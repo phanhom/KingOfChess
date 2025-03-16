@@ -39,6 +39,9 @@ public class RankListServiceImpl implements RankListService {
 
     @Override
     public Integer count() {
-        return Math.toIntExact(userMapper.selectCount(null));
+        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+        queryWrapper.ne("rating", 1500);
+
+        return Math.toIntExact(userMapper.selectCount(queryWrapper));
     }
 }

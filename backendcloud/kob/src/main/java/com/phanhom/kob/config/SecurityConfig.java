@@ -40,7 +40,7 @@ public class SecurityConfig {
         http.csrf(CsrfConfigurer::disable) // 基于token，不需要csrf
                 .sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // 基于token，不需要session
                 .authorizeHttpRequests((authz) -> authz
-                        .requestMatchers("/user/account/token", "/user/account/register", "/user/ranklist", "/user/ranklist/*").permitAll() // 放行api
+                        .requestMatchers("/api/user/account/token", "/api/user/account/register", "/api/user/ranklist", "/api/user/ranklist/*").permitAll() // 放行api
                         .requestMatchers("/pk/start/game").access((authentication, context) ->
                                 new AuthorizationDecision(
                                         context.getRequest().getRemoteAddr().equals("127.0.0.1") ||

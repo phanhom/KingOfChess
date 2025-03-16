@@ -101,7 +101,9 @@ div.matchground {
 }
 
 .card {
-    background: white;
+    background: url('@/assets/images/background.gif') center center;
+    background-size: cover; /* 保持比例，确保图片不被压缩或拉伸 */
+    background-position: center center; /* 确保背景居中 */
     border-radius: 20px;
     padding: 40px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);

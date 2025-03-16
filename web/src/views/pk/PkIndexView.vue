@@ -16,7 +16,7 @@ import { onMounted, onUnmounted, ref } from 'vue';
 import { useStore } from 'vuex';
 
 const store = useStore();
-const socketUrl = `ws://127.0.0.1:3000/websocket/${store.state.user.token}`;
+const socketUrl = `ws://47.96.154.38:3000/websocket/${store.state.user.token}`;
 
 let socket = null;
 

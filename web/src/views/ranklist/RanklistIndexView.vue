@@ -66,7 +66,7 @@ let totalPages = ref(1); // Total number of pages
 // Handle hover event to show photo after 1 second
 const showUserPhoto = async (id) => {
     hoverTimeout.value = setTimeout(async () => {
-        const res = await axios.post('http://127.0.0.1:3000/user/account/photo/userid', {
+        const res = await axios.post('http://47.96.154.38:3000/api/user/account/photo/userid', {
             id: id,
         }, {
             headers: {
@@ -101,14 +101,14 @@ const getRatingStyle = (rating) => {
 };
 
 const fetchData = async (page) => {
-    const res = await axios.get('http://127.0.0.1:3000/user/ranklist', {
+    const res = await axios.get('http://47.96.154.38:3000/api/user/ranklist', {
         params: { page: page }
     });
     users.value = res.data;
 };
 
 const fetchUserCount = async () => {
-    user_count.value = await axios.get('http://127.0.0.1:3000/user/ranklist/count');
+    user_count.value = await axios.get('http://47.96.154.38:3000/api/user/ranklist/count');
     totalPages.value = Math.ceil(user_count.value.data / 20); // Calculate total pages based on count and items per page
 };
 
@@ -142,6 +142,7 @@ onMounted(async () => {
 .card {
     width: 100%;
     margin-top: 20px;
+    margin-bottom: 80px;
 }
 
 /* .card-body {

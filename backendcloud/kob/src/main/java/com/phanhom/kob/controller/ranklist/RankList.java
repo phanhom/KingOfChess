@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+@CrossOrigin
 @RestController
 public class RankList {
 
@@ -21,13 +22,13 @@ public class RankList {
 //        return ans;
 //    }
 
-    @GetMapping("/user/ranklist")
+    @GetMapping("/api/user/ranklist")
     public List<User> ranklistpage(@RequestParam Map<String, String> map) {
         Integer page = Integer.parseInt(map.get("page"));
         return rankListService.ranklistpage(page);
     }
 
-    @GetMapping("/user/ranklist/count")
+    @GetMapping("/api/user/ranklist/count")
     public Integer count() {
         return rankListService.count();
     }

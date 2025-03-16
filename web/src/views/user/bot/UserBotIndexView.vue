@@ -234,7 +234,7 @@ const update_user_info = async () => {
     if (loading.value == true) return;
     loading.value = true;
     modify_info.error_message = '';
-    const res = await axios.post('http://127.0.0.1:3000/user/account/modifyinfo', {
+    const res = await axios.post('http://47.96.154.38:3000/api/user/account/modifyinfo', {
         username: modify_info.username,
         photo: modify_info.photo,
         description: modify_info.description,
@@ -262,7 +262,7 @@ const addbot_func = async () => {
     if (loading.value == true) return;
     loading.value = true;
     addbot.error_message = '';
-    const res = await axios.post('http://127.0.0.1:3000/user/bot/add', {
+    const res = await axios.post('http://47.96.154.38:3000/api/user/bot/add', {
         botName: addbot.botName,
         description: addbot.description,
         content: addbot.content,
@@ -291,7 +291,7 @@ const updatebot_func = async (bot) => {
     loading.value = true;
     addbot.error_message = '';
     console.log(bot.id);
-    const res = await axios.post('http://127.0.0.1:3000/user/bot/update', {
+    const res = await axios.post('http://47.96.154.38:3000/api/user/bot/update', {
         botId: bot.id,
         botName: bot.botName,
         description: bot.description,
@@ -321,7 +321,7 @@ const removebot_func = async (bot) => {
     const isConfirmed = window.confirm(`确定要删除 ${bot.botName} 吗？`);
     if (!isConfirmed) return;
     // confirmNum.value = 0;
-    const res = await axios.post('http://127.0.0.1:3000/user/bot/remove', {
+    const res = await axios.post('http://127.0.0.1:3000/api/user/bot/remove', {
         bot_id: bot.id,
     }, {
         headers: {
@@ -355,7 +355,7 @@ const getRatingStyle = (rating) => {
 };
 
 const refresh = () => {
-    axios.post('http://127.0.0.1:3000/user/bot/get', null, {
+    axios.post('http://47.96.154.38:3000/api/user/bot/get', null, {
         headers: {
             Authorization: `Bearer ${store.state.user.token}`,
         }

@@ -3,12 +3,14 @@ package com.phanhom.matchingsystem.controller;
 import com.phanhom.matchingsystem.service.MatchingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Objects;
 
+@CrossOrigin
 @RestController
 public class MatchingSystem {
 

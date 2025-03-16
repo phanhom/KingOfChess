@@ -8,23 +8,24 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+@CrossOrigin
 @RestController
 public class InfoController {
     @Autowired
     private InfoService infoService;
 
-    @GetMapping("/user/account/info")
+    @GetMapping("/api/user/account/info")
     public Map<String, String> getinfo() {
         return infoService.getinfo();
     }
 
-    @PostMapping("/user/account/photo/userid")
+    @PostMapping("/api/user/account/photo/userid")
     public Map<String, String> getuserphoto(@RequestBody Map<String, String> map) {
         Integer id = Integer.parseInt(map.get("id"));
         return infoService.getuserphoto(id);
     }
 
-    @PostMapping("/user/account/modifyinfo")
+    @PostMapping("/api/user/account/modifyinfo")
     public Map<String, String> modifyInfo(@RequestBody Map<String, String> map) throws IOException {
         String username = map.get("username");
         String photo = map.get("photo");

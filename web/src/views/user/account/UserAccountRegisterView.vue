@@ -49,7 +49,7 @@ const register = async () => {
     loading.value = true; // 开始加载，禁用按钮
     // 注册
     // console.log(store.state.user.token);
-    const res = await axios.post('http://127.0.0.1:3000/user/account/register', {
+    const res = await axios.post('http://47.96.154.38:3000/api/user/account/register', {
         username: username.value,
         password: password.value,
         confirmedPassword: confirmedPassword.value,
